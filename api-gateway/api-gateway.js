@@ -11,8 +11,8 @@ const swaggerUI = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 
 const apiGatewayRouter = require('./routes/ApiGatewayRoutes');
-const AppError = require('../common/utils/appError');
-const errorController = require('../common/controllers/errorController');
+const AppError = require('../common/src/utils/appError');
+const errorController = require('../common/src/controllers/errorController');
 
 const app = express();
 
@@ -69,7 +69,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // 3) ROUTES
-app.use('/api/v1/apiGateway', apiGatewayRouter);
+app.use('/api/v1/api-gateway', apiGatewayRouter);
 
 // Handle undefined routes
 app.all('*', (req, res, next) => {

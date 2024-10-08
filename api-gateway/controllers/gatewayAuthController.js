@@ -1,4 +1,4 @@
-const catchAsync = require("../../common/utils/catchAsync");
+const catchAsync = require("../../common/src/utils/catchAsync");
 
 exports.signup = catchAsync(async (req, res, next) => {
     const response = await fetch(
