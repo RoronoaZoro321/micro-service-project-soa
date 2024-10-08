@@ -4,15 +4,10 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
-const swaggerUI = require('swagger-ui-express');
-const swaggerSpec = require('./swagger');
-
-const apiGatewayRouter = require('./routes/ApiGatewayRoutes');
-const AppError = require('../common/utils/appError');
-const errorController = require('../common/controllers/errorController');
+const { AppError, errorController } = require('@splaika/common');
+const authRouter = require('./routes/routes');
 
 const app = express();
 
@@ -23,13 +18,10 @@ app.use(helmet());
 // Use the CORS middleware
 app.use(
 	cors({
-		origin: 'http://127.0.0.1:8000',
+		origin: process.env.API_GATEWAY_SERVICE_URL,
 		credentials: true,
 	})
 );
-
-// Serve Swagger documentation
-// app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
@@ -62,21 +54,18 @@ app.use((req, res, next) => {
 	next();
 });
 
-// To parse JSON bodies
-app.use(express.json());
-
-// To parse cookies
-app.use(cookieParser());
-
 // 3) ROUTES
-app.use('/api/v1/apiGateway', apiGatewayRouter);
+app.use('/api/v1/auth', authRouter);
 
-// Handle undefined routes
 app.all('*', (req, res, next) => {
-	next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+	next(
+		new AppError(
+			`Can't find ${req.originalUrl} on this auth service server!`,
+			404
+		)
+	);
 });
 
-// Error handling middleware
 app.use(errorController);
 
 module.exports = app;
