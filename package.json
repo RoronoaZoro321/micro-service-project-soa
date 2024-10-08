@@ -1,15 +1,28 @@
 {
-	"name": "micro-service-project-soa",
-	"version": "1.0.0",
-	"description": "microservices-systems",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"install:api-gateway": "cd api-gateway && npm install",
-		"start:api-gateway": "cd api-gateway && npm start",
-		"install:auth-service": "cd services/auth-service/backend && npm install",
-		"start:auth-service": "cd services/auth-service/backend && npm start"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC"
+  "name": "micro-service-project-soa",
+  "version": "1.0.0",
+  "description": "microservices-systems",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install:api-gateway": "cd api-gateway && npm install",
+    "install:auth": "cd auth && npm install",
+    "install:topup": "cd topup && npm install",
+    "install:transaction": "cd transaction && npm install",
+    "install:user": "cd users && npm install",
+    "start:api-gateway": "cd api-gateway && npm start",
+    "start:auth": "cd auth && npm start",
+    "start:topup": "cd topup && npm install",
+    "start:transaction": "cd transaction && npm install",
+    "start:user": "cd users && npm install",
+    "install:all": "npm run install:api-gateway && npm run install:auth && npm run install:topup && npm run install:transaction && npm run install:user",
+    "start:all": "concurrently \"npm run start:api-gateway\" \"npm run start:auth\" \" npm run start:topup\" \" npm run start:transaction\" \"npm run start:user\"",
+    "install": "npm run install:all",
+    "start": "npm run start:all"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.0.1"
+  }
 }
