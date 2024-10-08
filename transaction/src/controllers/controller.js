@@ -1,7 +1,10 @@
 const soap = require('soap');
-const Transaction = require('../models/transactionModel');
-const Account = require('../models/accountModel');
-const { AppError, errorController } = require('@splaika/common');
+const {
+	AppError,
+	errorController,
+	Account,
+	Transaction,
+} = require('@splaika/common');
 const fs = require('fs');
 const path = require('path');
 

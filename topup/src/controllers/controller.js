@@ -1,6 +1,4 @@
-const Account = require('../models/accountModel');
-const Topup = require('../models/topupModel');
-const { catchAsync, AppError } = require('@splaika/common');
+const { catchAsync, AppError, Account, Topup } = require('@splaika/common');
 
 exports.topup = catchAsync(async (req, res, next) => {
 	const { accountId, code } = req.body;

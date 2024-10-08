@@ -1,4 +1,5 @@
-const { catchAsync, AppError, User } = require('@splaika/common');
+const User = require('../../../mongoose/models/userModel');
+const { catchAsync, AppError } = require('@splaika/common');
 const jwt = require('jsonwebtoken');
 
 const signToken = (id) =>
