@@ -1,4 +1,4 @@
-const User = require('../../../../db/models/userModel');
+const User = require('../../../mongoose/models/userModel');
 const { catchAsync, AppError } = require('@splaika/common');
 const jwt = require('jsonwebtoken');
 

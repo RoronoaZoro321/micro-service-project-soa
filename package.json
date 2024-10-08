@@ -1,18 +1,15 @@
 {
-  "name": "micro-service-project-soa",
-  "version": "1.0.0",
-  "description": "microservices-systems",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "install:api-gateway": "cd api-gateway && npm install",
-    "start:api-gateway": "cd api-gateway && npm start",
-    "install:auth-service": "cd services/auth-service/backend && npm install",
-    "start:auth-service": "cd services/auth-service/backend && npm start"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@splaika/common": "^1.0.0"
-  }
+	"name": "micro-service-project-soa",
+	"version": "1.0.0",
+	"description": "microservices-systems",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"install:api-gateway": "cd api-gateway && npm install",
+		"start:api-gateway": "cd api-gateway && npm start",
+		"install:auth-service": "cd services/auth-service/backend && npm install",
+		"start:auth-service": "cd services/auth-service/backend && npm start"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC"
 }

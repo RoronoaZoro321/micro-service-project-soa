@@ -1,5 +1,4 @@
-const User = require('../models/userModel');
-const { catchAsync, AppError } = require('@splaika/common');
+const { catchAsync, AppError, User } = require('@splaika/common');
 
 const filterObj = (obj, ...allowedFields) => {
 	const newObj = {};

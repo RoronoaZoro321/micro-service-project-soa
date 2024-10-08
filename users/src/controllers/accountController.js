@@ -1,5 +1,4 @@
-const Account = require('../models/accountModel');
-const { catchAsync, AppError } = require('@splaika/common');
+const { catchAsync, AppError, Account } = require('@splaika/common');
 const userController = require('../controllers/userController');
 
 async function generateUniqueAccountNumber() {
