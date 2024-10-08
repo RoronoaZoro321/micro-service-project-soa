@@ -1,0 +1,19 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+    name: micro-service-project-soa
+manifests:
+    rawYaml:
+        - ./infra/k8s/*
+build:
+    local:
+        push: false
+    artifacts:
+        - image: pomper/auth
+          context: auth
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: 'src/**/*.js'
+                    dest: .
