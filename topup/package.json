@@ -1,5 +1,5 @@
 {
-	"name": "virtual-banking-auth-services-apis",
+	"name": "virtual-banking-topup-services-apis",
 	"version": "1.0.0",
 	"main": "app.js",
 	"scripts": {
