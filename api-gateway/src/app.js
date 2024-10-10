@@ -22,45 +22,23 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Define routes and corresponding microservices
-let services = [
+const services = [
 	{
 		route: '/api/v1/auth',
-		target: 'http://localhost:3001/api/v1/auth',
+		target: process.env.AUTH_SERVICE_URL,
 		middlewares: [],
 	},
 	{
 		route: '/api/v1/users',
-		target: 'http://localhost:3002/api/v1/users',
+		target: process.env.USER_SERVICE_URL,
 		middlewares: [protect],
 	},
 	{
 		route: '/api/v1/accounts',
-		target: 'http://localhost:3003/api/v1/accounts',
+		target: process.env.ACCOUNT_SERVICE_URL,
 		middlewares: [protect],
 	},
-	{
-		route: '/api/v1/admin',
-		target: 'http://localhost:3009/api/v1/admin',
-		middlewares: [adminProtect],
-	},
-	// Add more services as needed either deployed or locally.
 ];
-
-if (process.env.NODE_ENV === 'production') {
-	services = [
-		{
-			route: '/api/v1/auth',
-			target: process.env.AUTH_SERVICE_URL,
-			middlewares: [],
-		},
-		{
-			route: '/api/v1/users',
-			target: process.env.USER_SERVICE_URL,
-			middlewares: [protect],
-		},
-		// Add more services as needed either deployed or locally.
-	];
-}
 
 // Set up proxy middleware for each microservice
 services.forEach(({ route, target, middlewares }) => {
@@ -69,6 +47,11 @@ services.forEach(({ route, target, middlewares }) => {
 		changeOrigin: true,
 		pathRewrite: {
 			[`^${route}`]: '',
+		},
+		onProxyReq: (proxyReq, req) => {
+			if (req.currentUser) {
+				proxyReq.setHeader('user-id', req.currentUser.id);
+			}
 		},
 	};
 

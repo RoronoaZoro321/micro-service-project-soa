@@ -130,3 +130,33 @@ exports.getAccountByAccountNumber = catchAsync(async (req, res, next) => {
 		},
 	});
 });
+
+// exports.addAccount = catchAsync(async (userId, accountId) => {
+// 	const user = await User.findById(userId);
+
+// 	if (!user) {
+// 		return next(new AppError('User not found', 400));
+// 	}
+
+// 	user.accounts.push(accountId);
+// 	await user.save();
+// 	return user;
+// });
+
+// exports.removeAccount = async (userId, accountId) => {
+// 	const user = await User.findById(userId);
+
+// 	if (!user) {
+// 		return next(new AppError('User not found', 400));
+// 	}
+
+// 	console.log(!user.accounts.includes(accountId));
+// 	if (!user.accounts.includes(accountId)) {
+// 		console.log('Account not found');
+// 		return next(new AppError('Account not found', 400));
+// 	}
+
+// 	user.accounts.pull(accountId);
+
+// 	await user.save();
+// };

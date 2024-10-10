@@ -9,10 +9,14 @@ process.on('uncaughtException', (err) => {
 
 dotenv.config();
 
-const DB = process.env.DATABASE.replace(
+let DB = process.env.DATABASE.replace(
 	'<PASSWORD>',
 	process.env.DATABASE_PASSWORD
 );
+
+if (process.env.NODE_ENV === 'production') {
+	DB = process.env.DATABASE_PROD;
+}
 
 mongoose
 	.connect(DB)

@@ -49,7 +49,7 @@ app.use('/api/v1/accounts', accountRouter);
 app.all('*', (req, res, next) => {
 	next(
 		new AppError(
-			`Can't find ${req.originalUrl} on this user service server!`,
+			`Can't find ${req.originalUrl} on this account service server!`,
 			404
 		)
 	);

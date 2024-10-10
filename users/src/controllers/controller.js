@@ -76,32 +76,27 @@ exports.deleteAllUsers = catchAsync(async (req, res, next) => {
 	});
 });
 
-exports.addAccount = catchAsync(async (userId, accountId) => {
-	const user = await User.findById(userId);
+exports.getMe = catchAsync(async (req, res, next) => {
+	const userId = req.headers['user-id'];
 
-	if (!user) {
-		return next(new AppError('User not found', 400));
+	// 1) Check if userId is present
+	if (!userId) {
+		return next(new AppError('UserId is required', 400));
 	}
 
-	user.accounts.push(accountId);
-	await user.save();
-	return user;
+	// 2) Retrieve the user by userId
+	const user = await User.findById(userId);
+
+	// 3) Handle case where user is not found
+	if (!user) {
+		return next(new AppError('User not found', 404));
+	}
+
+	// 4) Send back the user data
+	res.status(200).json({
+		status: 'success',
+		data: {
+			user,
+		},
+	});
 });
-
-exports.removeAccount = async (userId, accountId) => {
-	const user = await User.findById(userId);
-
-	if (!user) {
-		return next(new AppError('User not found', 400));
-	}
-
-	console.log(!user.accounts.includes(accountId));
-	if (!user.accounts.includes(accountId)) {
-		console.log('Account not found');
-		return next(new AppError('Account not found', 400));
-	}
-
-	user.accounts.pull(accountId);
-
-	await user.save();
-};

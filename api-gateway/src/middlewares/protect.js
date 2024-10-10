@@ -4,7 +4,7 @@ const { AppError, catchAsync } = require('@splaika/common');
 
 const protect = catchAsync(async (req, res, next) => {
 	let token;
-	console.log(req.cookies);
+
 	if (req.cookies && req.cookies.sessionId) {
 		token = req.cookies.sessionId;
 	}
@@ -20,9 +20,11 @@ const protect = catchAsync(async (req, res, next) => {
 
 	const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-	req.user = {
+	req.currentUser = {
 		id: decoded.id,
 	};
+
+	req.headers['user-id'] = decoded.id;
 
 	next();
 });
