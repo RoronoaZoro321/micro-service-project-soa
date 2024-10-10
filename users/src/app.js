@@ -1,7 +1,6 @@
 const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const cors = require('cors');
@@ -19,24 +18,12 @@ app.use(bodyParser.json());
 app.use(helmet());
 
 // Use the CORS middleware
-app.use(
-	cors({
-		origin: 'http://esb:3000/',
-		credentials: true,
-	})
-);
+app.use(cors());
+
 // Development logging
 if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('dev'));
 }
-
-// Limit requests from same API
-// const limiter = rateLimit({
-//     max: 1000,
-//     windowMs: 60 * 60 * 10000,
-//     message: "Too many requests from this IP, please try again in an hour!",
-// });
-// app.use("/api", limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '100kb' }));

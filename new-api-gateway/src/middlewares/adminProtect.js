@@ -1,11 +1,9 @@
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
-const AppError = require('../../common/src/utils/appError');
-const catchAsync = require('../../common/src/utils/catchAsync');
+const { AppError, catchAsync } = require('@splaika/common');
 
-const protect = catchAsync(async (req, res, next) => {
+const adminProtect = catchAsync(async (req, res, next) => {
 	let token;
-
 	if (req.cookies && req.cookies.sessionId) {
 		token = req.cookies.sessionId;
 	}
@@ -47,9 +45,18 @@ const protect = catchAsync(async (req, res, next) => {
 		);
 	}
 
+	if (currentUser.role !== 'admin') {
+		return next(
+			new AppError(
+				'You do not have permission to perform this action',
+				403
+			)
+		);
+	}
+
 	req.user = currentUser;
 
 	next();
 });
 
-module.exports = protect;
+module.exports = adminProtect;
