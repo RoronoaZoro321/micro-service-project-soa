@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../app');
 
 describe('User Authentication', () => {
-	it('responds with a cookie when given valid credentials', async () => {
+	it('responds with a status 200 when given valid credentials', async () => {
 		const citizenId = '1234';
 		const name = 'Ronaldo';
 		const email = 'cr7@gmail.com';

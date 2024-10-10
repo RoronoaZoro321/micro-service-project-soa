@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../app');
 
 describe('User Signup', () => {
-	it('sets a cookie after successful signup', async () => {
+	it('responds with a status 201 after successful signup', async () => {
 		const citizenId = '1234';
 		const name = 'Ronaldo';
 		const email = 'cr7@gmail.com';
