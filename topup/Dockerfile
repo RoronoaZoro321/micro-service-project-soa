@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 3004
 
-ENTRYPOINT [ "npm", "start" ]
+CMD [ "npm", "run", "start:prod" ]

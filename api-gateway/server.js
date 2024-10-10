@@ -6,11 +6,14 @@ process.on('uncaughtException', (err) => {
 	process.exit(1);
 });
 
-dotenv.config({ path: '../configs/config.env' });
+dotenv.config();
 
-const app = require('./api-gateway');
+const app = require('./src/app');
 
+// Define port for Express server
 const PORT = process.env.API_GATEWAY_PORT || 8000;
+
+// Start Express server
 app.listen(PORT, () => {
 	console.log(`API-GATEWAY running on port ${PORT}...`);
 });

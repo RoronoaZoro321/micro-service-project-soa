@@ -1,23 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: auth-depl
+    name: api-gateway-depl
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: auth
+            app: api-gateway
     template:
         metadata:
             labels:
-                app: auth
+                app: api-gateway
         spec:
             containers:
-                - name: auth
-                  image: pomper/auth
-                  env:
-                      - name: DATABASE_PROD
-                        value: 'mongodb://auth-mongo-srv:27017/auth'
+                - name: api-gateway
+                  image: pomper/api-gateway
                   envFrom:
                       - configMapRef:
                             name: config-mapping
@@ -25,12 +22,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: auth-srv
+    name: api-gateway-srv
 spec:
     selector:
-        app: auth
+        app: api-gateway
     ports:
-        - name: auth
+        - name: api-gateway
           protocol: TCP
-          port: 3001
-          targetPort: 3001
+          port: 3000
+          targetPort: 3000

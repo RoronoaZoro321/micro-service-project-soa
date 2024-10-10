@@ -9,11 +9,19 @@ build:
     local:
         push: false
     artifacts:
+        - image: pomper/api-gateway
+          context: api-gateway
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: '**/*.js'
+                    dest: .
         - image: pomper/auth
           context: auth
           docker:
               dockerfile: Dockerfile
           sync:
               manual:
-                  - src: 'src/**/*.js'
+                  - src: '**/*.js'
                     dest: .
