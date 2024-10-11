@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: config-mapping
+data:
+    NODE_ENV: 'development'
+    DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+    DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+    API_GATEWAY_PORT: '3000'
+    AUTH_PORT: '3001'
+    USER_PORT: '3002'
+    ACCOUNTS_PORT: '3003'
+    TRANSACTION_PORT: '3004'
+    TOPUP_PORT: '3005'
+    NATS_URL: 'nats://nats-srv:4222'
+    API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+    AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+    USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+    ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+    TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transactions'
+    TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+    JWT_SECRET: 'ppkidtuengkunkhao'
+    JWT_EXPIRES_IN: '90d'
+    JWT_COOKIE_EXPIRES_IN: '90'

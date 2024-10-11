@@ -41,3 +41,18 @@ to run auth-service
 ```
 npm run start:auth-service
 ```
+
+to run overall
+```
+minikube addons enable ingress
+
+skaffold dev
+
+sudo minikube tunnel
+```
+
+
+# To convert the docker-compose.yml file to files that you can use with kubectl, run
+```
+kompose convert
+```
