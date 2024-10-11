@@ -1,4 +1,4 @@
-const natsWrapper = require('./natsWrapper');
+const natsWrapper = require('../natsWrapper');
 
 const publishUserCreated = (userData) => {
 	try {

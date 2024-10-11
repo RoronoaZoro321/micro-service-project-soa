@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/authModel');
 const { catchAsync, AppError } = require('@splaika/common');
-const { publishUserCreated } = require('../events/publisher');
+const { publishUserCreated } = require('../events/publishers/publisher');
 
 const signToken = (id) =>
 	jwt.sign({ id }, process.env.JWT_SECRET, {
