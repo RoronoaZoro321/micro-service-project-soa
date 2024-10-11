@@ -8,6 +8,19 @@ const filterObj = (obj, ...allowedFields) => {
 	return newObj;
 };
 
+exports.createUser = async (userData) => {
+	try {
+		const newUser = await User.create(userData);
+
+		console.log('User created successfully:', newUser);
+
+		return newUser;
+	} catch (err) {
+		console.error('Error creating user:', err);
+		throw err;
+	}
+};
+
 exports.getAllUsers = catchAsync(async (req, res, next) => {
 	const users = await User.find();
 
@@ -78,6 +91,7 @@ exports.deleteAllUsers = catchAsync(async (req, res, next) => {
 
 exports.getMe = catchAsync(async (req, res, next) => {
 	const userId = req.headers['user-id'];
+	console.log(userId);
 
 	// 1) Check if userId is present
 	if (!userId) {
@@ -85,7 +99,7 @@ exports.getMe = catchAsync(async (req, res, next) => {
 	}
 
 	// 2) Retrieve the user by userId
-	const user = await User.findById(userId);
+	const user = await User.find({ citizenId: userId });
 
 	// 3) Handle case where user is not found
 	if (!user) {

@@ -1,5 +1,6 @@
 const { catchAsync, AppError, User } = require('@splaika/common');
 const jwt = require('jsonwebtoken');
+const { publishUserCreated } = require('../events/publisher');
 
 const signToken = (id) =>
 	jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -7,7 +8,7 @@ const signToken = (id) =>
 	});
 
 const createSendToken = (user, statusCode, res) => {
-	const token = signToken(user._id);
+	const token = signToken(user.citizenId);
 
 	const cookieOptions = {
 		expires: new Date(
@@ -15,7 +16,8 @@ const createSendToken = (user, statusCode, res) => {
 		),
 		// httpOnly: true, // Cookie cannot be accessed via JavaScript
 		httpOnly: false,
-		secure: process.env.NODE_ENV === 'production', // Only send cookie over HTTPS in production
+		// secure: process.env.NODE_ENV === 'production', // Only send cookie over HTTPS in production
+		secure: false,
 		sameSite: 'None',
 	};
 
@@ -48,6 +50,13 @@ exports.signup = catchAsync(async (req, res, next) => {
 		pin: pin,
 	});
 
+	publishUserCreated({
+		citizenId: newUser.citizenId,
+		name: newUser.name,
+		email: newUser.email,
+		pin: newUser.pin,
+	});
+
 	createSendToken(newUser, 201, res);
 });
 
@@ -73,7 +82,8 @@ exports.logout = (req, res) => {
 	res.cookie('sessionId', '', {
 		expires: new Date(0),
 		httpOnly: false,
-		secure: process.env.NODE_ENV === 'production',
+		// secure: process.env.NODE_ENV === 'production',
+		secure: false,
 		sameSite: 'None',
 	});
 

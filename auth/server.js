@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const { connect } = require('nats');
 
 process.on('uncaughtException', (err) => {
 	console.log('UNCAUGHT EXCEPTION (Auth service)! Shutting down...');
@@ -9,10 +10,14 @@ process.on('uncaughtException', (err) => {
 
 dotenv.config();
 
-let DB = process.env.DATABASE.replace(
-	'<PASSWORD>',
-	process.env.DATABASE_PASSWORD
-);
+let DB;
+
+if (process.env.NODE_ENV === 'development') {
+	DB = process.env.DATABASE.replace(
+		'<PASSWORD>',
+		process.env.DATABASE_PASSWORD
+	);
+}
 
 if (process.env.NODE_ENV === 'production') {
 	DB = process.env.DATABASE_PROD;
@@ -24,12 +29,26 @@ mongoose
 	.catch((err) => console.error('DB connection error:', err));
 
 const app = require('./src/app');
+const { initializeNATSConnection } = require('./src/events/publisher');
 
 const PORT = process.env.AUTH_PORT;
 
-app.listen(PORT, () => {
-	console.log(`Auth Service running on port ${PORT}...`);
-});
+const startServer = async () => {
+	try {
+		await initializeNATSConnection();
+		console.log('NATS connection initialized');
+
+		// Start the server after successful NATS connection
+		app.listen(PORT, () => {
+			console.log(`Auth Service running on port ${PORT}...`);
+		});
+	} catch (error) {
+		console.error('Failed to start the Auth Service:', error);
+		process.exit(1);
+	}
+};
+
+startServer();
 
 process.on('unhandledRejection', (err) => {
 	console.log('UNHANDLER REJECTION (Auth service)! Shutting down...');

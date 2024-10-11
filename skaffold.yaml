@@ -25,3 +25,11 @@ build:
               manual:
                   - src: '**/*.js'
                     dest: .
+        - image: pomper/users
+          context: users
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: '**/*.js'
+                    dest: .

@@ -8,6 +8,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const { errorController } = require('@splaika/common');
 const protect = require('./middlewares/protect');
 const adminProtect = require('./middlewares/adminProtect');
+const { AppError } = require('@splaika/common');
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('combined'));
 }
+
+app.disable('x-powered-by');
 
 // Define routes and corresponding microservices
 const services = [
