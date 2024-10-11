@@ -1,5 +1,6 @@
-const { catchAsync, AppError, User } = require('@splaika/common');
 const jwt = require('jsonwebtoken');
+const User = require('../models/authModel');
+const { catchAsync, AppError } = require('@splaika/common');
 const { publishUserCreated } = require('../events/publisher');
 
 const signToken = (id) =>
@@ -54,7 +55,6 @@ exports.signup = catchAsync(async (req, res, next) => {
 		citizenId: newUser.citizenId,
 		name: newUser.name,
 		email: newUser.email,
-		pin: newUser.pin,
 	});
 
 	createSendToken(newUser, 201, res);
