@@ -56,7 +56,7 @@ const startServer = async () => {
 			.closed()
 			.then(() => {
 				console.log('NATS connection closed');
-				process.exit();
+				process.exit(1);
 			})
 			.catch((err) => {
 				console.error('Error closing NATS connection:', err);

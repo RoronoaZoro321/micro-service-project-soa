@@ -1,4 +1,27 @@
-# nats-depl.yaml
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+    name: nats-pv
+spec:
+    capacity:
+        storage: 1Gi
+    accessModes:
+        - ReadWriteOnce
+    hostPath:
+        path: /data/nats
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: nats-pvc
+spec:
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,6 +42,13 @@ spec:
                   ports:
                       - containerPort: 4222
                   args: ['--jetstream'] # Enable JetStream
+                  volumeMounts:
+                      - name: nats-storage
+                        mountPath: /data/nats
+            volumes:
+                - name: nats-storage
+                  persistentVolumeClaim:
+                      claimName: nats-pvc
 ---
 apiVersion: v1
 kind: Service
