@@ -5,29 +5,17 @@
   >
     <div class="bg-white p-6 rounded-lg shadow-md text-center h-auto w-96">
       <div class="flex flex-row justify-center">
-        <!-- <Iconify
-          :icon="Coin"
-          class="text-yellow-500 w-16 h-16 animate-bounce"
-        />
-        <Iconify
-          :icon="Coin"
-          class="text-yellow-500 w-16 h-16 animate-bounce"
-        /> -->
+
         <Iconify
           :icon="Coin"
           class="text-yellow-500 w-16 h-16 animate-bounce"
         />
-        <!-- <Iconify
-          :icon="Coin"
-          class="text-yellow-500 w-16 h-16 animate-bounce"
-        />
-        <Iconify
-          :icon="Coin"
-          class="text-yellow-500 w-16 h-16 animate-bounce"
-        /> -->
+
       </div>
 
       <h1 class="font-bold text-2xl mb-2">Crypto</h1>
+      <div class="font-semibold text-slate-500 mb-2"><p > your balacne</p><span > 0.00</span></div>
+      
       <select
         v-model="selectedOption"
         class="border border-gray-300 rounded-md px-4 py-2 w-full"
@@ -62,7 +50,7 @@
           class="border border-gray-300 rounded-md px-4 py-2 w-full"
         />
         <label for="transferAmount" class="block mb-2 text-left"
-          >Enter transfer amount:</label
+          >Enter Address to:</label
         >
         <input
           type="number"
