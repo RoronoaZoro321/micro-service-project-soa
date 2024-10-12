@@ -15,6 +15,24 @@ spec:
             containers:
                 - name: users-mongo
                   image: mongo
+                  volumeMounts:
+                      - name: mongo-data
+                        mountPath: /data/db # Mounting the volume at MongoDB's data directory
+            volumes:
+                - name: mongo-data
+                  persistentVolumeClaim:
+                      claimName: users-mongo-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: users-mongo-pvc
+spec:
+    accessModes:
+        - ReadWriteOnce # Allows the volume to be mounted by a single node
+    resources:
+        requests:
+            storage: 5Gi
 ---
 apiVersion: v1
 kind: Service

@@ -3,21 +3,20 @@ const UserCreatedSubscriber = require('./userCreatedSubscriber');
 
 const initializeNATSSubscriptions = async () => {
 	try {
-		console.log('Initializing NATS subscriptions');
-
-		const stringCodec = natsWrapper._stringCodec;
+		console.log('Initializing NATS JetStream subscriptions');
 
 		// Instantiate subscriber classes
 		const userCreatedSubscriber = new UserCreatedSubscriber();
-		// const userUpdatedSubscriber = new UserUpdatedSubscriber();
 
-		// Start listening
-		await userCreatedSubscriber.listen(natsWrapper._client, stringCodec);
-		// await userUpdatedSubscriber.listen(natsWrapper._client, stringCodec);
+		// Start listening with JetStream
+		await userCreatedSubscriber.listen(natsWrapper._client);
 
-		console.log('NATS subscriptions initialized');
+		console.log('NATS JetStream subscriptions initialized');
 	} catch (error) {
-		console.error('Error initializing NATS subscriptions:', error);
+		console.error(
+			'Error initializing NATS JetStream subscriptions:',
+			error
+		);
 		throw error;
 	}
 };

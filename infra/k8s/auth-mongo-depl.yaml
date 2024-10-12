@@ -15,6 +15,24 @@ spec:
             containers:
                 - name: auth-mongo
                   image: mongo
+                  volumeMounts:
+                      - name: mongo-data
+                        mountPath: /data/db
+            volumes:
+                - name: mongo-data
+                  persistentVolumeClaim:
+                      claimName: auth-mongo-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: auth-mongo-pvc
+spec:
+    accessModes:
+        - ReadWriteOnce # Allows the volume to be mounted by a single node
+    resources:
+        requests:
+            storage: 5Gi
 ---
 apiVersion: v1
 kind: Service

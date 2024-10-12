@@ -1,3 +1,4 @@
+# nats-depl.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,6 +18,7 @@ spec:
                   image: nats:alpine
                   ports:
                       - containerPort: 4222
+                  args: ['--jetstream'] # Enable JetStream
 ---
 apiVersion: v1
 kind: Service

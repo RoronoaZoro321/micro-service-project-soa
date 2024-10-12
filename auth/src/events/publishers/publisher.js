@@ -1,8 +1,8 @@
 const natsWrapper = require('../natsWrapper');
 
-const publishUserCreated = (userData) => {
+const publishUserCreated = async (userData) => {
 	try {
-		natsWrapper.publish('user:created', userData);
+		await natsWrapper.publish('user:created', userData);
 		console.log('Event published to user:created');
 	} catch (error) {
 		console.error('Error publishing event:', error);
