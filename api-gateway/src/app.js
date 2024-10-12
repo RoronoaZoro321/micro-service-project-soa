@@ -5,10 +5,9 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const { errorController } = require('@splaika/common');
+const { AppError, errorController } = require('@splaika/common');
 const protect = require('./middlewares/protect');
 const adminProtect = require('./middlewares/adminProtect');
-const { AppError } = require('@splaika/common');
 
 const app = express();
 

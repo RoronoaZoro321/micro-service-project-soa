@@ -10,7 +10,7 @@ process.on('uncaughtException', (err) => {
 dotenv.config();
 
 const app = require('./src/app');
-const natsWrapper = require('./src/events/natsWrapper');
+const { natsWrapper } = require('@splaika/common');
 
 const PORT = process.env.AUTH_PORT;
 let server;

@@ -1,4 +1,4 @@
-const natsWrapper = require('../natsWrapper');
+const { natsWrapper } = require('@splaika/common');
 const UserCreatedSubscriber = require('./userCreatedSubscriber');
 
 const initializeNATSSubscriptions = async () => {

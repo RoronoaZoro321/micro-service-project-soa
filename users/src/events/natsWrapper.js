@@ -1,6 +1,6 @@
 // natsWrapper.js
 const { connect, StringCodec } = require('nats');
-const Event = require('../models/eventModel');
+const { Event } = require('@splaika/common');
 
 class NatsWrapper {
 	constructor() {

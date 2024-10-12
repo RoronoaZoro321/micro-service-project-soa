@@ -1,4 +1,4 @@
-const Subscriber = require('../subscribers/baseSubscriber');
+const { Subscriber } = require('@splaika/common');
 const { createUser } = require('../../controllers/controller');
 
 class UserCreatedSubscriber extends Subscriber {
