@@ -1,5 +1,6 @@
 const { catchAsync, AppError } = require('@splaika/common');
 const User = require('../models/userModel');
+const { publishUserCreated } = require('../events/publishers/publisher');
 
 const filterObj = (obj, ...allowedFields) => {
 	const newObj = {};
@@ -12,6 +13,10 @@ const filterObj = (obj, ...allowedFields) => {
 exports.createUser = async (userData) => {
 	try {
 		const newUser = await User.create(userData);
+
+		publishUserCreated({
+			userId: userData._id,
+		});
 
 		return newUser;
 	} catch (err) {
@@ -36,6 +41,23 @@ exports.getUserById = catchAsync(async (req, res, next) => {
 	const { userId } = req.body;
 
 	const user = await User.findById(userId);
+
+	if (!user) {
+		return next(new AppError('User not found', 400));
+	}
+
+	res.status(200).json({
+		status: 'success',
+		data: {
+			user,
+		},
+	});
+});
+
+exports.getUserByCitizenId = catchAsync(async (req, res, next) => {
+	const { citizenId } = req.body;
+
+	const user = await User.find({ citizenId: citizenId });
 
 	if (!user) {
 		return next(new AppError('User not found', 400));
@@ -90,7 +112,6 @@ exports.deleteAllUsers = catchAsync(async (req, res, next) => {
 
 exports.getMe = catchAsync(async (req, res, next) => {
 	const userId = req.headers['user-id'];
-	console.log(userId);
 
 	// 1) Check if userId is present
 	if (!userId) {
@@ -98,7 +119,7 @@ exports.getMe = catchAsync(async (req, res, next) => {
 	}
 
 	// 2) Retrieve the user by userId
-	const user = await User.find({ citizenId: userId });
+	const user = await User.findById(userId);
 
 	// 3) Handle case where user is not found
 	if (!user) {

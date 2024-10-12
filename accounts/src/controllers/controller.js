@@ -1,5 +1,5 @@
 const { catchAsync, AppError } = require('@splaika/common');
-const userController = require('../controllers/userController');
+const Account = require('../models/accountModel');
 
 async function generateUniqueAccountNumber() {
 	let accountNumber;
@@ -13,6 +13,20 @@ async function generateUniqueAccountNumber() {
 
 	return accountNumber;
 }
+
+exports.createFirstAccount = async (userData) => {
+	try {
+		const newAccount = await Account.create({
+			accountNumber: await generateUniqueAccountNumber(),
+			userId: userData.userId,
+		});
+
+		return newAccount;
+	} catch (err) {
+		console.error('Error creating user:', err);
+		throw err;
+	}
+};
 
 exports.createAccount = catchAsync(async (req, res, next) => {
 	const newAccount = await Account.create({
@@ -100,7 +114,7 @@ exports.deleteAccountById = catchAsync(async (req, res, next) => {
 	const accountId = req.body.accountId;
 
 	const account = await Account.findByIdAndDelete(accountId);
-	await userController.removeAccount(account.userId, accountId);
+	// await userController.removeAccount(account.userId, accountId);
 
 	if (!account) {
 		return next(new AppError('Account not found', 400));

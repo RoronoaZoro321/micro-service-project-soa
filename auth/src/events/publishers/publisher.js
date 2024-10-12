@@ -1,12 +1,12 @@
 const { natsWrapper } = require('@splaika/common');
 
-const publishUserCreated = async (userData) => {
+const publishUserSignup = async (userData) => {
 	try {
-		await natsWrapper.publish('user:created', userData);
-		console.log('Event published to user:created');
+		await natsWrapper.publish('user:signup', userData);
+		console.log('Event published to user:signup');
 	} catch (error) {
 		console.error('Error publishing event:', error);
 	}
 };
 
-module.exports = { publishUserCreated };
+module.exports = { publishUserSignup };

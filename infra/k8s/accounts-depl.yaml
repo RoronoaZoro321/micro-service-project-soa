@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: users-depl
+    name: accounts-depl
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: users
+            app: accounts
     template:
         metadata:
             labels:
-                app: users
+                app: accounts
         spec:
             containers:
-                - name: users
-                  image: pomper/users
+                - name: accounts
+                  image: pomper/accounts
                   env:
                       - name: DATABASE_PROD
-                        value: 'mongodb://users-mongo-srv:27017/users'
+                        value: 'mongodb://accounts-mongo-srv:27017/accounts'
                   envFrom:
                       - configMapRef:
                             name: config-mapping
@@ -26,12 +26,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: users-srv
+    name: accounts-srv
 spec:
     selector:
-        app: users
+        app: accounts
     ports:
-        - name: users
+        - name: accounts
           protocol: TCP
-          port: 3002
-          targetPort: 3002
+          port: 3003
+          targetPort: 3003

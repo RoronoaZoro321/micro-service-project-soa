@@ -21,7 +21,7 @@ const protect = catchAsync(async (req, res, next) => {
 	const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
 	req.currentUser = {
-		id: decoded.citizenId,
+		id: decoded.id,
 	};
 
 	req.headers['user-id'] = decoded.id;

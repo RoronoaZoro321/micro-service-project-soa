@@ -7,7 +7,9 @@ router.route('/').get(userController.getAllUsers);
 
 router.get('/getUserById', userController.getUserById);
 
-router.patch('/updateMe', userController.updateMe);
+router.get('/getUserByCitizenId', userController.getUserByCitizenId);
+
+router.put('/updateMe', userController.updateMe);
 
 router.get('/me', userController.getMe);
 

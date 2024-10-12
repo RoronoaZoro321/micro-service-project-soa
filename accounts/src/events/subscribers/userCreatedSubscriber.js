@@ -1,12 +1,12 @@
 const { Subscriber } = require('@splaika/common');
-const { createUser } = require('../../controllers/controller');
+const { createFirstAccount } = require('../../controllers/controller');
 
 class UserCreatedSubscriber extends Subscriber {
 	constructor() {
-		super('user:created', 'users-service-durable', async (data, msg) => {
+		super('user:created', 'accounts-service-durable', async (data, msg) => {
 			try {
-				await createUser(data);
-				console.log('User created in users service:', data);
+				await createFirstAccount(data);
+				console.log('Account created in accounts service:', data);
 				msg.ack();
 			} catch (error) {
 				console.error('Error handling user:created event:', error);

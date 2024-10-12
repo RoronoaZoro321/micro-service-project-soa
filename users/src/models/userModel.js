@@ -18,6 +18,12 @@ const userSchema = new mongoose.Schema({
 		lowercase: true,
 		validate: [validator.isEmail, 'Please provide a valid email'],
 	},
+	accounts: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Account',
+		},
+	],
 });
 
 const User = mongoose.model('User', userSchema);

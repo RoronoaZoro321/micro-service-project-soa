@@ -15,7 +15,7 @@ const {
 	initializeNATSSubscriptions,
 } = require('./src/events/subscribers/subscriber');
 
-const PORT = process.env.USER_PORT || 3000;
+const PORT = process.env.USER_PORT;
 let server; // Declare server variable for later use
 
 const startServer = async () => {
