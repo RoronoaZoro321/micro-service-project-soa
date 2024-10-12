@@ -13,8 +13,6 @@ exports.createUser = async (userData) => {
 	try {
 		const newUser = await User.create(userData);
 
-		console.log('User created successfully:', newUser);
-
 		return newUser;
 	} catch (err) {
 		console.error('Error creating user:', err);
