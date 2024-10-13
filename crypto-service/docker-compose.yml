@@ -1,0 +1,7 @@
+services:
+  crypto:
+    build: .
+    ports:
+      - "4001:4001"
+    # depends_on:
+    #   - ganache

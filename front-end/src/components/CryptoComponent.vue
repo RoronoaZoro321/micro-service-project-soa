@@ -70,9 +70,11 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import { ref, onMounted } from "vue";
 import Web3 from "web3";
 import { Icon as Iconify } from "@iconify/vue";
+import { set } from "lodash";
 const Coin = "jam:coin-f";
 
 // State variables
@@ -89,131 +91,17 @@ const currentAccount = ref("");
 // Web3-related variables
 let web3;
 let contract;
-const contractAddress = "0x8eCBBef8b2fDd4fD38Ba0E1c19Dc89d9B7D3F51c";
 
-// Contract ABI (trimmed for brevity)
-const contractABI = [
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "deposit",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "receiver",
-				"type": "address"
-			}
-		],
-		"name": "transfer",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "Deposit",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "Withdraw",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "getBalance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "test",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	}
-]
-
-onMounted(() => {
+onMounted(async () => {
 
   
   if (typeof window.ethereum !== "undefined") {
+    getContractAddressAndABI();
     connectWallet();
     web3 = new Web3(window.ethereum);
+
+    const { contractAddress, contractABI } = await getContractAddressAndABI();
+
     contract = new web3.eth.Contract(contractABI, contractAddress);
     getBalanceFromContract();
 
@@ -226,6 +114,24 @@ onMounted(() => {
     alert("MetaMask is not installed. Please install it to use this app.");
   }
 });
+
+async function getContractAddressAndABI() {
+  try {
+    const response = await axios.get(
+      "http://127.0.0.1:4001/api/v1/crypto/getAddressAndABI",
+      { withCredentials: true }
+    )
+
+    const result = await response.data;
+    const { contractAddress, contractABI } = result.data
+
+    return { contractAddress, contractABI };
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
 
 async function connectWallet() {
   try {
@@ -254,8 +160,23 @@ async function depositToContract() {
     const accounts = await web3.eth.getAccounts();
     const account = accounts[0];
     await contract.methods.deposit(newValue.value).send({ from: account });
-    
     getBalanceFromContract();
+
+    const response = await axios.post(
+      "http://127.0.0.1:4001/api/v1/crypto/deposit",
+      { amount: newValue.value },
+      { withCredentials: true }
+    );
+
+    const result = await response.data;
+    newValue.value = 0;
+
+    if (result.data.isSuccess) {
+      alert("Deposit successful!");
+    } else {
+      alert("Deposit failed. Please try again.");
+    }
+
   } catch (error) {
     console.error("Error depositing money:", error);
   }
@@ -275,6 +196,22 @@ async function transferCrypto() {
       from: account,
     });
     getBalanceFromContract();
+
+    const response = await axios.post(
+      "http://127.0.0.1:4001/api/v1/crypto/transfer",
+      { amount: transfer_amount.value, receiver: receiver.value },
+      { withCredentials: true }
+    );
+
+    const result = await response.data;
+    transfer_amount.value = 0;
+
+    if (result.data.isSuccess) {
+      alert("Transfer successful!");
+    } else {
+      alert("Transfer failed. Please try again.");
+    }
+
   } catch (error) {
     console.error("Error during transfer:", error);
   }
