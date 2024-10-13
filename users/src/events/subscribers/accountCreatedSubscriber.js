@@ -1,5 +1,5 @@
 const { Subscriber } = require('@splaika/common');
-const { updateUserAccounts } = require('../controllers/userController'); // Import the controller
+const { updateUserAccounts } = require('../../controllers/controller'); // Import the controller
 
 class AccountCreatedSubscriber extends Subscriber {
 	constructor() {

@@ -11,6 +11,9 @@ dotenv.config();
 
 const app = require('./src/app');
 const { natsWrapper } = require('@splaika/common');
+const {
+	initializeNATSSubscriptions,
+} = require('./src/events/subscribers/subscriber');
 
 const PORT = process.env.ACCOUNT_PORT;
 let server;
@@ -43,6 +46,9 @@ const startServer = async () => {
 
 		// Initialize NATS connection
 		await natsWrapper.connect();
+
+		// Initialize NATS subscriptions
+		await initializeNATSSubscriptions();
 
 		// Handle NATS connection close
 		natsWrapper._client

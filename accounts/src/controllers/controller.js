@@ -15,6 +15,27 @@ async function generateUniqueAccountNumber() {
 	return accountNumber;
 }
 
+exports.createAccount = catchAsync(async (req, res, next) => {
+	const userId = req.headers['user-id'];
+
+	const newAccount = await Account.create({
+		accountNumber: await generateUniqueAccountNumber(),
+		userId,
+	});
+
+	publishAccountCreated({
+		accountId: newAccount._id,
+		userId,
+	});
+
+	res.status(201).json({
+		status: 'success',
+		data: {
+			account: newAccount,
+		},
+	});
+});
+
 exports.updateAccount = catchAsync(async (data) => {
 	const { accountId, amount, type } = data;
 
@@ -39,27 +60,6 @@ exports.updateAccount = catchAsync(async (data) => {
 	await account.save();
 
 	return account;
-});
-
-exports.createAccount = catchAsync(async (req, res, next) => {
-	const userId = req.headers['user-id'];
-
-	const newAccount = await Account.create({
-		accountNumber: await generateUniqueAccountNumber(),
-		userId,
-	});
-
-	publishAccountCreated({
-		accountId: newAccount._id,
-		userId,
-	});
-
-	res.status(201).json({
-		status: 'success',
-		data: {
-			account: newAccount,
-		},
-	});
 });
 
 exports.getAllAccounts = catchAsync(async (req, res, next) => {
@@ -172,6 +172,64 @@ exports.getMyAccounts = catchAsync(async (req, res, next) => {
 		results: accounts.length,
 		data: {
 			accounts,
+		},
+	});
+});
+
+exports.updateMyAccount = catchAsync(async (req, res, next) => {
+	const userId = req.headers['user-id'];
+	const accountId = req.body.accountId;
+	const updateData = { ...req.body };
+
+	// Remove fields that should not be updated
+	delete updateData.accountId;
+	delete updateData.accountNumber;
+	delete updateData.userId;
+
+	// Find the account by ID and user ID to ensure ownership
+	const account = await Account.findOneAndUpdate(
+		{ _id: accountId, userId },
+		updateData,
+		{ new: true, runValidators: true }
+	);
+
+	if (!account) {
+		return next(
+			new AppError('Account not found or not owned by user', 404)
+		);
+	}
+
+	res.status(200).json({
+		status: 'success',
+		data: {
+			account,
+		},
+	});
+});
+
+exports.updateAccountById = catchAsync(async (req, res, next) => {
+	const accountId = req.body.accountId;
+	const updateData = { ...req.body };
+
+	// Remove fields that should not be updated
+	delete updateData.accountId;
+	delete updateData.accountNumber;
+	delete updateData.userId;
+
+	// Find the account by ID and update
+	const account = await Account.findByIdAndUpdate(accountId, updateData, {
+		new: true,
+		runValidators: true,
+	});
+
+	if (!account) {
+		return next(new AppError('Account not found', 404));
+	}
+
+	res.status(200).json({
+		status: 'success',
+		data: {
+			account,
 		},
 	});
 });

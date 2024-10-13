@@ -6,9 +6,13 @@ const router = express.Router();
 router
 	.route('/')
 	.get(accountController.getAllAccounts)
-	.post(accountController.createAccount);
+	.post(accountController.createAccount)
+	.put(accountController.updateAccountById);
 
-router.get('/me', accountController.getMyAccounts);
+router
+	.route('/me')
+	.get(accountController.getMyAccounts)
+	.put(accountController.updateMyAccount);
 
 router.get(
 	'/getAccountByAccountNumber',
