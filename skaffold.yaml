@@ -49,3 +49,11 @@ build:
               manual:
                   - src: '**/*.js'
                     dest: .
+        - image: pomper/statements
+          context: statements
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: '**/*.js'
+                    dest: .

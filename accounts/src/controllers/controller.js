@@ -92,7 +92,6 @@ exports.getAccountById = catchAsync(async (req, res, next) => {
 });
 
 exports.getAccountsByUserId = catchAsync(async (req, res, next) => {
-	// const userId = req.headers["user-id"];
 	const userId = req.body.userId;
 
 	const accounts = await Account.find({ userId });

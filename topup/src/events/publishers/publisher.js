@@ -9,4 +9,13 @@ const publishAccountUpdated = async (data) => {
 	}
 };
 
-module.exports = { publishAccountUpdated };
+const publishStatementCreated = async (data) => {
+	try {
+		await natsWrapper.publish('statement:created', data);
+		console.log('Event published to account:created');
+	} catch (error) {
+		console.error('Error publishing event:', error);
+	}
+};
+
+module.exports = { publishAccountUpdated, publishStatementCreated };

@@ -45,6 +45,11 @@ const services = [
 		target: process.env.TOPUP_SERVICE_URL,
 		middlewares: [],
 	},
+	{
+		route: '/api/v1/statements',
+		target: process.env.STATEMENT_SERVICE_URL,
+		middlewares: [protect],
+	},
 ];
 
 // Set up proxy middleware for each microservice

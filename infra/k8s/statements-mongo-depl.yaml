@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: statements-mongo-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: statements-mongo
+    template:
+        metadata:
+            labels:
+                app: statements-mongo
+        spec:
+            containers:
+                - name: statements-mongo
+                  image: mongo
+                  volumeMounts:
+                      - name: mongo-data
+                        mountPath: /data/db # Mounting the volume at MongoDB's data directory
+            volumes:
+                - name: mongo-data
+                  persistentVolumeClaim:
+                      claimName: statements-mongo-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: statements-mongo-pvc
+spec:
+    accessModes:
+        - ReadWriteOnce # Allows the volume to be mounted by a single node
+    resources:
+        requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: statements-mongo-srv
+spec:
+    selector:
+        app: statements-mongo
+    ports:
+        - name: db
+          protocol: TCP
+          port: 27017
+          targetPort: 27017

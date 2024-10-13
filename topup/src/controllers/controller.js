@@ -1,6 +1,9 @@
 const { catchAsync, AppError } = require('@splaika/common');
 const Topup = require('../models/topupModel');
-const { publishAccountUpdated } = require('../events/publishers/publisher');
+const {
+	publishAccountUpdated,
+	publishStatementCreated,
+} = require('../events/publishers/publisher');
 
 exports.topup = catchAsync(async (req, res, next) => {
 	const { accountId, code } = req.body;
@@ -15,21 +18,27 @@ exports.topup = catchAsync(async (req, res, next) => {
 		return next(new AppError('Code already used', 400));
 	}
 
-	// accountId, amount, type
-	publishAccountUpdated({
+	await publishAccountUpdated({
+		type: 'deposit',
 		accountId,
 		amount: topup.amount,
-		type: 'deposit',
 	});
 
 	topup.isUsed = true;
 	await topup.save();
 
+	await publishStatementCreated({
+		type: 'topup',
+		senderAccountId: null,
+		receiverAccountId: accountId,
+		amount: topup.amount,
+	});
+
+	// If both are successful, return success
 	res.status(200).json({
 		status: 'success',
 		data: {
 			message: 'Topup successful',
-			// account,
 		},
 	});
 });
