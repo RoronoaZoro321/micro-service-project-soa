@@ -8,7 +8,7 @@ const statementSchema = new mongoose.Schema(
 			enum: ['transfer', 'topup'],
 			required: [true, 'Transaction type is required'],
 		},
-		SenderAccountId: {
+		senderAccountId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Account',
 			validate: {
@@ -18,7 +18,7 @@ const statementSchema = new mongoose.Schema(
 				message: 'SenderId is required for transfers',
 			},
 		},
-		ReceiverAccountId: {
+		receiverAccountId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Account',
 			required: [true, 'Receiver is required'],

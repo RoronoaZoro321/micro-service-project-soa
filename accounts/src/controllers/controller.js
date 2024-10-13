@@ -28,6 +28,8 @@ exports.createAccount = catchAsync(async (req, res, next) => {
 		userId,
 	});
 
+	req.headers['current-account-id'] = newAccount._id;
+
 	res.status(201).json({
 		status: 'success',
 		data: {
@@ -103,27 +105,6 @@ exports.getAccountsByUserId = catchAsync(async (req, res, next) => {
 			accounts,
 		},
 	});
-});
-
-exports.checkAccountOwnership = catchAsync(async (req, res, next) => {
-	const { userId, accountId } = req.body;
-
-	console.log(userId);
-	console.log(accountId);
-
-	const account = await Account.findById(accountId);
-
-	if (!account || account.userId.toString() !== userId) {
-		res.status(200).json({
-			status: 'success',
-			result: false,
-		});
-	} else {
-		res.status(200).json({
-			status: 'success',
-			result: true,
-		});
-	}
 });
 
 exports.deleteAccountById = catchAsync(async (req, res, next) => {

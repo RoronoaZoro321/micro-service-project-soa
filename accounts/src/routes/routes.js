@@ -23,8 +23,6 @@ router.get('/getAccountById', accountController.getAccountById);
 
 router.get('/getAccountsByUserId', accountController.getAccountsByUserId);
 
-router.post('/checkAccountOwnership', accountController.checkAccountOwnership);
-
 router.delete('/deleteAccountById', accountController.deleteAccountById);
 
 module.exports = router;
