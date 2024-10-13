@@ -1,4 +1,5 @@
-const { catchAsync, AppError, User } = require('@splaika/common');
+const { catchAsync, AppError } = require('@splaika/common');
+const User = require('../models/userModel');
 
 const filterObj = (obj, ...allowedFields) => {
 	const newObj = {};
@@ -8,18 +9,26 @@ const filterObj = (obj, ...allowedFields) => {
 	return newObj;
 };
 
-exports.createUser = async (userData) => {
-	try {
-		const newUser = await User.create(userData);
+exports.createUser = catchAsync(async (userData) => {
+	const newUser = await User.create(userData);
+	return newUser;
+});
 
-		console.log('User created successfully:', newUser);
+exports.updateUserAccounts = catchAsync(async (userId, accountId) => {
+	const user = await User.findById(userId);
 
-		return newUser;
-	} catch (err) {
-		console.error('Error creating user:', err);
-		throw err;
+	// Throw an error if the user is not found
+	if (!user) {
+		throw new AppError('User not found', 404);
 	}
-};
+
+	// Add the account ID to the user's accounts array
+	user.accounts.push(accountId);
+	await user.save();
+
+	// Return the updated user for further actions if needed
+	return user;
+});
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
 	const users = await User.find();
@@ -37,6 +46,23 @@ exports.getUserById = catchAsync(async (req, res, next) => {
 	const { userId } = req.body;
 
 	const user = await User.findById(userId);
+
+	if (!user) {
+		return next(new AppError('User not found', 400));
+	}
+
+	res.status(200).json({
+		status: 'success',
+		data: {
+			user,
+		},
+	});
+});
+
+exports.getUserByCitizenId = catchAsync(async (req, res, next) => {
+	const { citizenId } = req.body;
+
+	const user = await User.find({ citizenId: citizenId });
 
 	if (!user) {
 		return next(new AppError('User not found', 400));
@@ -91,7 +117,6 @@ exports.deleteAllUsers = catchAsync(async (req, res, next) => {
 
 exports.getMe = catchAsync(async (req, res, next) => {
 	const userId = req.headers['user-id'];
-	console.log(userId);
 
 	// 1) Check if userId is present
 	if (!userId) {
@@ -99,7 +124,7 @@ exports.getMe = catchAsync(async (req, res, next) => {
 	}
 
 	// 2) Retrieve the user by userId
-	const user = await User.find({ citizenId: userId });
+	const user = await User.findById(userId);
 
 	// 3) Handle case where user is not found
 	if (!user) {

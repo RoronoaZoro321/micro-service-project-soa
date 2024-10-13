@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:20-alpine
 
 WORKDIR /opt/program
 
@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 3003
 
-CMD [ "npm", "run" , "start:prod" ]
+CMD [ "npm", "run", "start:prod" ]

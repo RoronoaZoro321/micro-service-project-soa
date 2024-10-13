@@ -1,6 +1,7 @@
-const { catchAsync, AppError, User } = require('@splaika/common');
 const jwt = require('jsonwebtoken');
-const { publishUserCreated } = require('../events/publisher');
+const User = require('../models/authModel');
+const { catchAsync, AppError } = require('@splaika/common');
+const { publishUserSignup } = require('../events/publishers/publisher');
 
 const signToken = (id) =>
 	jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -8,7 +9,7 @@ const signToken = (id) =>
 	});
 
 const createSendToken = (user, statusCode, res) => {
-	const token = signToken(user.citizenId);
+	const token = signToken(user._id);
 
 	const cookieOptions = {
 		expires: new Date(
@@ -50,11 +51,11 @@ exports.signup = catchAsync(async (req, res, next) => {
 		pin: pin,
 	});
 
-	publishUserCreated({
+	publishUserSignup({
+		_id: newUser._id,
 		citizenId: newUser.citizenId,
 		name: newUser.name,
 		email: newUser.email,
-		pin: newUser.pin,
 	});
 
 	createSendToken(newUser, 201, res);

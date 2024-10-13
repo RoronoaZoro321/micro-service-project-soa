@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: auth-mongo-depl
+    name: accounts-mongo-depl
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: auth-mongo
+            app: accounts-mongo
     template:
         metadata:
             labels:
-                app: auth-mongo
+                app: accounts-mongo
         spec:
             containers:
-                - name: auth-mongo
+                - name: accounts-mongo
                   image: mongo
                   volumeMounts:
                       - name: mongo-data
@@ -21,12 +21,12 @@ spec:
             volumes:
                 - name: mongo-data
                   persistentVolumeClaim:
-                      claimName: auth-mongo-pvc
+                      claimName: accounts-mongo-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: auth-mongo-pvc
+    name: accounts-mongo-pvc
 spec:
     accessModes:
         - ReadWriteOnce # Allows the volume to be mounted by a single node
@@ -37,10 +37,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: auth-mongo-srv
+    name: accounts-mongo-srv
 spec:
     selector:
-        app: auth-mongo
+        app: accounts-mongo
     ports:
         - name: db
           protocol: TCP

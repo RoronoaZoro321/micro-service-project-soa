@@ -1,5 +1,6 @@
-const { catchAsync, AppError, Account } = require('@splaika/common');
-const userController = require('../controllers/userController');
+const { catchAsync, AppError } = require('@splaika/common');
+const Account = require('../models/accountModel');
+const { publishAccountCreated } = require('../events/publishers/publisher');
 
 async function generateUniqueAccountNumber() {
 	let accountNumber;
@@ -14,14 +15,44 @@ async function generateUniqueAccountNumber() {
 	return accountNumber;
 }
 
+exports.updateAccount = catchAsync(async (data) => {
+	const { accountId, amount, type } = data;
+
+	// Find the account by ID
+	const account = await Account.findById(accountId);
+
+	// Check if the account exists
+	if (!account) {
+		throw new AppError('Account not found', 404);
+	}
+
+	// Update the balance based on the transaction type (deposit or transfer)
+	if (type === 'deposit') {
+		account.balance += amount; // Add amount for deposit
+	} else if (type === 'transfer') {
+		account.balance -= amount; // Subtract amount for transfer
+	} else {
+		throw new AppError('Invalid transaction type', 400); // Error for invalid type
+	}
+
+	// Save the updated account
+	await account.save();
+
+	return account;
+});
+
 exports.createAccount = catchAsync(async (req, res, next) => {
+	const userId = req.headers['user-id'];
+
 	const newAccount = await Account.create({
 		accountNumber: await generateUniqueAccountNumber(),
-		userId: req.body.userId,
+		userId,
 	});
 
-	// add account to user
-	await userController.addAccount(req.body.userId, newAccount._id);
+	publishAccountCreated({
+		accountId: newAccount._id,
+		userId,
+	});
 
 	res.status(201).json({
 		status: 'success',
@@ -100,7 +131,7 @@ exports.deleteAccountById = catchAsync(async (req, res, next) => {
 	const accountId = req.body.accountId;
 
 	const account = await Account.findByIdAndDelete(accountId);
-	await userController.removeAccount(account.userId, accountId);
+	// await userController.removeAccount(account.userId, accountId);
 
 	if (!account) {
 		return next(new AppError('Account not found', 400));
@@ -131,32 +162,16 @@ exports.getAccountByAccountNumber = catchAsync(async (req, res, next) => {
 	});
 });
 
-// exports.addAccount = catchAsync(async (userId, accountId) => {
-// 	const user = await User.findById(userId);
+exports.getMyAccounts = catchAsync(async (req, res, next) => {
+	const userId = req.headers['user-id'];
 
-// 	if (!user) {
-// 		return next(new AppError('User not found', 400));
-// 	}
+	const accounts = await Account.find({ userId });
 
-// 	user.accounts.push(accountId);
-// 	await user.save();
-// 	return user;
-// });
-
-// exports.removeAccount = async (userId, accountId) => {
-// 	const user = await User.findById(userId);
-
-// 	if (!user) {
-// 		return next(new AppError('User not found', 400));
-// 	}
-
-// 	console.log(!user.accounts.includes(accountId));
-// 	if (!user.accounts.includes(accountId)) {
-// 		console.log('Account not found');
-// 		return next(new AppError('Account not found', 400));
-// 	}
-
-// 	user.accounts.pull(accountId);
-
-// 	await user.save();
-// };
+	res.status(200).json({
+		status: 'success',
+		results: accounts.length,
+		data: {
+			accounts,
+		},
+	});
+});

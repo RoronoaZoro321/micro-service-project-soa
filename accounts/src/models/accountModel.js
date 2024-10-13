@@ -16,17 +16,13 @@ const accountSchema = new mongoose.Schema({
 		default: 0,
 		min: [0, 'Balance cannot be negative'],
 	},
-	transactionIds: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Transaction',
-		},
-	],
+	// transactionIds: [
+	// 	{
+	// 		type: mongoose.Schema.Types.ObjectId,
+	// 		ref: 'Transaction',
+	// 	},
+	// ],
 });
-
-// accountSchema.pre("save", function (next) {
-//     next();
-// });
 
 const Account = mongoose.model('Account', accountSchema);
 

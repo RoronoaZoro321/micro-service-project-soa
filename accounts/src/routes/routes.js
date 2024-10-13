@@ -1,5 +1,5 @@
 const express = require('express');
-const accountController = require('../controllers/accountController');
+const accountController = require('../controllers/controller');
 
 const router = express.Router();
 
@@ -8,12 +8,17 @@ router
 	.get(accountController.getAllAccounts)
 	.post(accountController.createAccount);
 
-router.post(
+router.get('/me', accountController.getMyAccounts);
+
+router.get(
 	'/getAccountByAccountNumber',
 	accountController.getAccountByAccountNumber
 );
-router.post('/getAccountById', accountController.getAccountById);
-router.post('/getAccountsByUserId', accountController.getAccountsByUserId);
+
+router.get('/getAccountById', accountController.getAccountById);
+
+router.get('/getAccountsByUserId', accountController.getAccountsByUserId);
+
 router.post('/checkAccountOwnership', accountController.checkAccountOwnership);
 
 router.delete('/deleteAccountById', accountController.deleteAccountById);
