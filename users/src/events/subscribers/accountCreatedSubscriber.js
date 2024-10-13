@@ -1,5 +1,5 @@
 const { Subscriber } = require('@splaika/common');
-const User = require('../../models/userModel'); // Import the User model
+const { updateUserAccounts } = require('../controllers/userController'); // Import the controller
 
 class AccountCreatedSubscriber extends Subscriber {
 	constructor() {
@@ -10,15 +10,10 @@ class AccountCreatedSubscriber extends Subscriber {
 				const { accountId, userId } = data;
 
 				try {
-					const user = await User.findById(userId);
+					// Delegate user account update to the controller function
+					await updateUserAccounts(userId, accountId);
 
-					if (!user) {
-						throw new Error('User not found');
-					}
-
-					user.accounts.push(accountId);
-					await user.save();
-
+					// Acknowledge the message after successful processing
 					msg.ack();
 				} catch (error) {
 					console.error(

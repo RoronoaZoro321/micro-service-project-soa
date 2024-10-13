@@ -9,15 +9,26 @@ const filterObj = (obj, ...allowedFields) => {
 	return newObj;
 };
 
-exports.createUser = async (userData) => {
-	try {
-		const newUser = await User.create(userData);
-		return newUser;
-	} catch (err) {
-		console.error('Error creating user:', err);
-		throw err;
+exports.createUser = catchAsync(async (userData) => {
+	const newUser = await User.create(userData);
+	return newUser;
+});
+
+exports.updateUserAccounts = catchAsync(async (userId, accountId) => {
+	const user = await User.findById(userId);
+
+	// Throw an error if the user is not found
+	if (!user) {
+		throw new AppError('User not found', 404);
 	}
-};
+
+	// Add the account ID to the user's accounts array
+	user.accounts.push(accountId);
+	await user.save();
+
+	// Return the updated user for further actions if needed
+	return user;
+});
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
 	const users = await User.find();

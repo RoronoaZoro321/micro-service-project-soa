@@ -15,6 +15,32 @@ async function generateUniqueAccountNumber() {
 	return accountNumber;
 }
 
+exports.updateAccount = catchAsync(async (data) => {
+	const { accountId, amount, type } = data;
+
+	// Find the account by ID
+	const account = await Account.findById(accountId);
+
+	// Check if the account exists
+	if (!account) {
+		throw new AppError('Account not found', 404);
+	}
+
+	// Update the balance based on the transaction type (deposit or transfer)
+	if (type === 'deposit') {
+		account.balance += amount; // Add amount for deposit
+	} else if (type === 'transfer') {
+		account.balance -= amount; // Subtract amount for transfer
+	} else {
+		throw new AppError('Invalid transaction type', 400); // Error for invalid type
+	}
+
+	// Save the updated account
+	await account.save();
+
+	return account;
+});
+
 exports.createAccount = catchAsync(async (req, res, next) => {
 	const userId = req.headers['user-id'];
 
