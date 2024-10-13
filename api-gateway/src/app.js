@@ -43,11 +43,16 @@ const services = [
 	{
 		route: '/api/v1/topup',
 		target: process.env.TOPUP_SERVICE_URL,
-		middlewares: [],
+		middlewares: [protect],
 	},
 	{
 		route: '/api/v1/statements',
 		target: process.env.STATEMENT_SERVICE_URL,
+		middlewares: [protect],
+	},
+	{
+		route: '/api/v1/transaction',
+		target: process.env.TRANSACTION_SERVICE_URL,
 		middlewares: [protect],
 	},
 ];

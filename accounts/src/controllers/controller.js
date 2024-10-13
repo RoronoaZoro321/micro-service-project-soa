@@ -28,8 +28,6 @@ exports.createAccount = catchAsync(async (req, res, next) => {
 		userId,
 	});
 
-	req.headers['current-account-id'] = newAccount._id;
-
 	res.status(201).json({
 		status: 'success',
 		data: {
@@ -53,7 +51,11 @@ exports.updateAccount = catchAsync(async (data) => {
 	if (type === 'deposit') {
 		account.balance += amount; // Add amount for deposit
 	} else if (type === 'transfer') {
-		account.balance -= amount; // Subtract amount for transfer
+		account.balance -= amount; // Subtract amount for
+
+		if (account.balance < 0) {
+			throw new AppError('Insufficient funds', 400);
+		}
 	} else {
 		throw new AppError('Invalid transaction type', 400); // Error for invalid type
 	}

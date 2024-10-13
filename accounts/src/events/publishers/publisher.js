@@ -9,4 +9,6 @@ const publishAccountCreated = async (data) => {
 	}
 };
 
-module.exports = { publishAccountCreated };
+module.exports = {
+	publishAccountCreated,
+};

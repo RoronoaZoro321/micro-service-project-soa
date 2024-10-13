@@ -37,9 +37,7 @@ exports.topup = catchAsync(async (req, res, next) => {
 	// If both are successful, return success
 	res.status(200).json({
 		status: 'success',
-		data: {
-			message: 'Topup successful',
-		},
+		message: 'Topup successful',
 	});
 });
 

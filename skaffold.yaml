@@ -57,3 +57,11 @@ build:
               manual:
                   - src: '**/*.js'
                     dest: .
+        - image: pomper/transaction
+          context: transaction
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: '**/*.js'
+                    dest: .
