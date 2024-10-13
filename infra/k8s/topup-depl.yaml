@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: topup-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: topup
+    template:
+        metadata:
+            labels:
+                app: topup
+        spec:
+            containers:
+                - name: topup
+                  image: pomper/topup
+                  env:
+                      - name: DATABASE_PROD
+                        value: 'mongodb://topup-mongo-srv:27017/topup'
+                  envFrom:
+                      - configMapRef:
+                            name: config-mapping
+            restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: topup-srv
+spec:
+    selector:
+        app: topup
+    ports:
+        - name: topup
+          protocol: TCP
+          port: 3004
+          targetPort: 3004
