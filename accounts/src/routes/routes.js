@@ -8,6 +8,8 @@ router
 	.get(accountController.getAllAccounts)
 	.post(accountController.createAccount);
 
+router.get('/me', accountController.getMyAccounts);
+
 router.get(
 	'/getAccountByAccountNumber',
 	accountController.getAccountByAccountNumber

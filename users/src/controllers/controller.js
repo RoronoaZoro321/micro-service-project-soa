@@ -1,6 +1,5 @@
 const { catchAsync, AppError } = require('@splaika/common');
 const User = require('../models/userModel');
-const { publishUserCreated } = require('../events/publishers/publisher');
 
 const filterObj = (obj, ...allowedFields) => {
 	const newObj = {};
@@ -13,11 +12,6 @@ const filterObj = (obj, ...allowedFields) => {
 exports.createUser = async (userData) => {
 	try {
 		const newUser = await User.create(userData);
-
-		publishUserCreated({
-			userId: userData._id,
-		});
-
 		return newUser;
 	} catch (err) {
 		console.error('Error creating user:', err);

@@ -11,16 +11,12 @@ dotenv.config();
 
 const app = require('./src/app');
 const { natsWrapper } = require('@splaika/common');
-const {
-	initializeNATSSubscriptions,
-} = require('./src/events/subscribers/subscriber');
 
 const PORT = process.env.ACCOUNT_PORT;
 let server;
 
 const startServer = async () => {
 	try {
-		// Determine the correct database URL based on the environment
 		let DB;
 		if (process.env.NODE_ENV === 'development') {
 			if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD) {
@@ -47,9 +43,6 @@ const startServer = async () => {
 
 		// Initialize NATS connection
 		await natsWrapper.connect();
-
-		// Initialize NATS subscriptions
-		await initializeNATSSubscriptions();
 
 		// Handle NATS connection close
 		natsWrapper._client

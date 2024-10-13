@@ -1,5 +1,6 @@
 const { catchAsync, AppError } = require('@splaika/common');
 const Account = require('../models/accountModel');
+const { publishAccountCreated } = require('../events/publishers/publisher');
 
 async function generateUniqueAccountNumber() {
 	let accountNumber;
@@ -14,28 +15,18 @@ async function generateUniqueAccountNumber() {
 	return accountNumber;
 }
 
-exports.createFirstAccount = async (userData) => {
-	try {
-		const newAccount = await Account.create({
-			accountNumber: await generateUniqueAccountNumber(),
-			userId: userData.userId,
-		});
-
-		return newAccount;
-	} catch (err) {
-		console.error('Error creating user:', err);
-		throw err;
-	}
-};
-
 exports.createAccount = catchAsync(async (req, res, next) => {
+	const userId = req.headers['user-id'];
+
 	const newAccount = await Account.create({
 		accountNumber: await generateUniqueAccountNumber(),
-		userId: req.body.userId,
+		userId,
 	});
 
-	// add account to user
-	await userController.addAccount(req.body.userId, newAccount._id);
+	publishAccountCreated({
+		accountId: newAccount._id,
+		userId,
+	});
 
 	res.status(201).json({
 		status: 'success',
@@ -145,32 +136,16 @@ exports.getAccountByAccountNumber = catchAsync(async (req, res, next) => {
 	});
 });
 
-// exports.addAccount = catchAsync(async (userId, accountId) => {
-// 	const user = await User.findById(userId);
+exports.getMyAccounts = catchAsync(async (req, res, next) => {
+	const userId = req.headers['user-id'];
 
-// 	if (!user) {
-// 		return next(new AppError('User not found', 400));
-// 	}
+	const accounts = await Account.find({ userId });
 
-// 	user.accounts.push(accountId);
-// 	await user.save();
-// 	return user;
-// });
-
-// exports.removeAccount = async (userId, accountId) => {
-// 	const user = await User.findById(userId);
-
-// 	if (!user) {
-// 		return next(new AppError('User not found', 400));
-// 	}
-
-// 	console.log(!user.accounts.includes(accountId));
-// 	if (!user.accounts.includes(accountId)) {
-// 		console.log('Account not found');
-// 		return next(new AppError('Account not found', 400));
-// 	}
-
-// 	user.accounts.pull(accountId);
-
-// 	await user.save();
-// };
+	res.status(200).json({
+		status: 'success',
+		results: accounts.length,
+		data: {
+			accounts,
+		},
+	});
+});

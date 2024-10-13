@@ -16,12 +16,7 @@ const app = express();
 app.use(helmet());
 
 // Use the CORS middleware
-app.use(
-	cors({
-		origin: 'http://esb:3000/',
-		credentials: true,
-	})
-);
+app.use(cors());
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
