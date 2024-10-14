@@ -25,11 +25,11 @@ jobs:
  
     # - name: Run tests
     #   run: npm test
-
-    - name: Build project, build.sh executable
+    - name: Make build.sh executable
       run: chmod +x ./build.sh
 
-
+    - name: Build project
+      run: ./build.sh
   # deploy:
   #   needs: build
   #   runs-on: ubuntu-latest
