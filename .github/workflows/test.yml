@@ -26,7 +26,7 @@ jobs:
     #   run: npm test
 
     - name: Build project
-      run: sleep 20 && ls
+      run: ./build.sh
 
   # deploy:
   #   needs: build
