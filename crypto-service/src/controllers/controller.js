@@ -1,4 +1,5 @@
 const { catchAsync, AppError, User } = require('@splaika/common');
+const { publishAccountUpdated } = require('../events/publishers/publisher');
 
 const contractABI = [
 	{

@@ -73,3 +73,11 @@ build:
               manual:
                   - src: '**/*.js'
                     dest: .
+        - image: pomper/frontend
+          context: front-end
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: '**/*.js'
+                    dest: .

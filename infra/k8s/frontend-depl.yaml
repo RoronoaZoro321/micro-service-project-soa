@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: crypto-depl
+    name: frontend-depl
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: crypto
+            app: frontend
     template:
         metadata:
             labels:
-                app: crypto
+                app: frontend
         spec:
             containers:
-                - name: crypto
-                  image: pomper/crypto
+                - name: frontend
+                  image: pomper/frontend
                   envFrom:
                       - configMapRef:
                             name: config-mapping
@@ -23,12 +23,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: crypto-srv
+    name: frontend-srv
 spec:
+    type: LoadBalancer
     selector:
-        app: crypto
+        app: frontend
     ports:
-        - name: crypto
+        - name: frontend
           protocol: TCP
-          port: 3006
-          targetPort: 3006
+          port: 8000
+          targetPort: 8000
