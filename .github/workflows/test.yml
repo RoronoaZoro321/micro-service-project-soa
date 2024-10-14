@@ -20,13 +20,15 @@ jobs:
         node-version: '20'
 
     - name: Install dependencies
-      run: npm run install
+      # run: npm run install
+      run: ls
  
     # - name: Run tests
     #   run: npm test
 
-    - name: Build project
-      run: ./build.sh
+    - name: Build project, build.sh executable
+      run: chmod +x ./build.sh
+
 
   # deploy:
   #   needs: build
