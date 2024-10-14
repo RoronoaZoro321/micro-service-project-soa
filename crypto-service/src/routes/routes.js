@@ -1,11 +1,14 @@
 const express = require('express');
-const cryptoController = require('../controllers/controller')
+const cryptoController = require('../controllers/controller');
 
 const router = express.Router();
 
-router.route('/getAddressAndABI').get(cryptoController.getContractAbiAndAddress)
+router
+	.route('/getAddressAndABI')
+	.get(cryptoController.getContractAbiAndAddress);
 
 router.route('/deposit').post(cryptoController.deposit);
+
 router.route('/transfer').post(cryptoController.transfer);
 // router.route('/').get(cryptoController.getAccounts);
 

@@ -5,6 +5,8 @@ const {
 	publishStatementCreated,
 } = require('../events/publishers/publisher');
 
+// exports.updateTransaction = catchAsync(async (data) => {});
+
 exports.transfer = catchAsync(async (req, res, next) => {
 	const { senderId, receiverId, amount } = req.body;
 

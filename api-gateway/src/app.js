@@ -55,6 +55,11 @@ const services = [
 		target: process.env.TRANSACTION_SERVICE_URL,
 		middlewares: [protect],
 	},
+	{
+		route: '/api/v1/crypto',
+		target: process.env.CRYPTO_SERVICE_URL,
+		middlewares: [protect],
+	},
 ];
 
 // Set up proxy middleware for each microservice

@@ -11,8 +11,8 @@
 	"author": "",
 	"license": "ISC",
 	"description": "",
-    "dependencies": {
-		"@splaika/common": "^1.0.14",
+	"dependencies": {
+		"@splaika/common": "^1.0.16",
 		"bcryptjs": "^2.4.3",
 		"cors": "^2.8.5",
 		"dotenv": "^16.4.5",

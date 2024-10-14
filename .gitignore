@@ -133,3 +133,4 @@ dist
 
 # k8s config yaml
 config-map.yaml
+config-map.yml

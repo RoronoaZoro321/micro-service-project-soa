@@ -164,6 +164,7 @@ class NatsWrapper {
 		if (this._client) {
 			this._client.close();
 			console.log('NATS connection closed');
+			process.exit(1);
 		}
 	}
 }

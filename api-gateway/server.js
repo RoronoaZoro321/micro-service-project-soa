@@ -11,7 +11,7 @@ dotenv.config();
 const app = require('./src/app');
 
 // Define port for Express server
-const PORT = process.env.API_GATEWAY_PORT || 8000;
+const PORT = process.env.API_GATEWAY_PORT;
 
 // Start Express server
 app.listen(PORT, () => {

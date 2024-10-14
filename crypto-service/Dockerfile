@@ -7,7 +7,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 4001
+EXPOSE 3006
 
 CMD [ "npm", "run", "start:prod" ]
 

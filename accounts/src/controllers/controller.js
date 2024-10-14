@@ -47,20 +47,37 @@ exports.updateAccount = catchAsync(async (data) => {
 		throw new AppError('Account not found', 404);
 	}
 
-	// Update the balance based on the transaction type (deposit or transfer)
-	if (type === 'deposit') {
-		account.balance += amount; // Add amount for deposit
-	} else if (type === 'transfer') {
-		account.balance -= amount; // Subtract amount for
+	switch (type) {
+		case 'deposit':
+			account.balance += amount;
 
-		if (account.balance < 0) {
-			throw new AppError('Insufficient funds', 400);
-		}
-	} else {
-		throw new AppError('Invalid transaction type', 400); // Error for invalid type
+			// await publishBalanceUpdated({
+			// 	transactionId: transaction._id,
+			// 	status: 'success',
+			// 	accountId: transaction.recieverAccountId,
+			// 	amount: transaction.amount,
+			// });
+
+			break;
+		case 'transfer':
+			account.balance -= amount;
+
+			if (account.balance < 0) {
+				throw new AppError('Insufficient funds', 400);
+			}
+
+			// await publishBalanceUpdated({
+			// 	transactionId: transaction._id,
+			// 	status: 'success',
+			// 	accountId: transaction.senderAccountId,
+			// 	amount: transaction.amount,
+			// });
+
+			break;
+		default:
+			throw new AppError('Invalid transaction type', 400);
 	}
 
-	// Save the updated account
 	await account.save();
 
 	return account;

@@ -65,3 +65,11 @@ build:
               manual:
                   - src: '**/*.js'
                     dest: .
+        - image: pomper/crypto
+          context: crypto-service
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: '**/*.js'
+                    dest: .

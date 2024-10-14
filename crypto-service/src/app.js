@@ -18,10 +18,7 @@ app.use(bodyParser.json());
 app.use(helmet());
 
 // Use the CORS middleware
-app.use(cors({
-	origin: 'http://localhost:8000',
-	credentials: true
-}));
+app.use(cors());
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
@@ -58,6 +55,6 @@ app.all('*', (req, res, next) => {
 	);
 });
 
-app.use(errorController); 
+app.use(errorController);
 
 module.exports = app;

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: crypto-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: crypto
+    template:
+        metadata:
+            labels:
+                app: crypto
+        spec:
+            containers:
+                - name: crypto
+                  image: pomper/crypto
+                  envFrom:
+                      - configMapRef:
+                            name: config-mapping
+            restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: crypto-srv
+spec:
+    type: LoadBalancer
+    selector:
+        app: crypto
+    ports:
+        - name: crypto
+          protocol: TCP
+          port: 3006
+          targetPort: 3006
