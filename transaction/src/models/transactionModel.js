@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema(
 	{
-		senderId: {
+		senderAccountId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Account',
 			required: true,
 		},
-		receiverId: {
+		receiverAccountId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Account',
 			required: true,
@@ -17,19 +17,17 @@ const transactionSchema = new mongoose.Schema(
 			required: [true, 'Please provide the amount'],
 			min: [1, 'Amount cannot be negative or zero'],
 		},
+		status: {
+			type: String,
+			enum: ['PENDING', 'COMPLETED', 'FAILED', 'REFUNDED'],
+			required: [true, 'Please provide the status'],
+			default: 'COMPLETED',
+		},
 	},
 	{
 		timestamps: true,
 	}
 );
-
-// Add indexes
-transactionSchema.index({ senderId: 1 });
-transactionSchema.index({ receiverId: 1 });
-
-// transactionSchema.pre("save", function (next) {
-//     next();
-// });
 
 const Transaction = mongoose.model('Transaction', transactionSchema);
 

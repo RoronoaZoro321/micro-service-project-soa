@@ -1,13 +1,12 @@
-const { catchAsync, AppError, Account, Topup } = require('@splaika/common');
+const { catchAsync, AppError } = require('@splaika/common');
+const Topup = require('../models/topupModel');
+const {
+	publishAccountUpdated,
+	publishStatementCreated,
+} = require('../events/publishers/publisher');
 
 exports.topup = catchAsync(async (req, res, next) => {
 	const { accountId, code } = req.body;
-	console.log('code', code);
-	const account = await Account.findById(accountId);
-
-	if (!account) {
-		return next(new AppError('Account not found', 400));
-	}
 
 	const topup = await Topup.findOne({ code });
 
@@ -19,22 +18,32 @@ exports.topup = catchAsync(async (req, res, next) => {
 		return next(new AppError('Code already used', 400));
 	}
 
-	account.balance += topup.amount;
+	await publishAccountUpdated({
+		type: 'deposit',
+		accountId,
+		amount: topup.amount,
+	});
+
 	topup.isUsed = true;
-	await account.save();
 	await topup.save();
 
+	await publishStatementCreated({
+		type: 'topup',
+		senderAccountId: null,
+		receiverAccountId: accountId,
+		amount: topup.amount,
+	});
+
+	// If both are successful, return success
 	res.status(200).json({
 		status: 'success',
-		data: {
-			message: 'Topup successful',
-			account,
-		},
+		message: 'Topup successful',
 	});
 });
 
 exports.createTopup = catchAsync(async (req, res, next) => {
 	const { code, amount } = req.body;
+
 	const topup = await Topup.create({
 		code,
 		amount,

@@ -1,15 +1,17 @@
 const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const cors = require('cors');
 
 const { AppError, errorController } = require('@splaika/common');
-const transactionRouter = require('./routes/routes');
+const statementRouter = require('./routes/routes');
+const bodyParser = require('body-parser');
 
 const app = express();
+
+app.use(bodyParser.json());
 
 // 1) GLOBAL MIDDLEWARES
 // Set security HTTP headers
@@ -22,14 +24,6 @@ app.use(cors());
 if (process.env.NODE_ENV === 'development') {
 	app.use(morgan('dev'));
 }
-
-// Limit requests from same API
-// const limiter = rateLimit({
-//     max: 1000,
-//     windowMs: 60 * 60 * 10000,
-//     message: "Too many requests from this IP, please try again in an hour!",
-// });
-// app.use("/api", limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '100kb' }));
@@ -50,12 +44,12 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
-app.use('/api/v1/transaction', transactionRouter);
+app.use('/api/v1/statements', statementRouter);
 
 app.all('*', (req, res, next) => {
 	next(
 		new AppError(
-			`Can't find ${req.originalUrl} on this transaction service server!`,
+			`Can't find ${req.originalUrl} on this user service server!`,
 			404
 		)
 	);

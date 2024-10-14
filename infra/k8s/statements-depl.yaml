@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: statements-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: statements
+    template:
+        metadata:
+            labels:
+                app: statements
+        spec:
+            containers:
+                - name: statements
+                  image: pomper/statements
+                  env:
+                      - name: DATABASE_PROD
+                        value: 'mongodb://statements-mongo-srv:27017/statements'
+                  envFrom:
+                      - configMapRef:
+                            name: config-mapping
+            restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: statements-srv
+spec:
+    selector:
+        app: statements
+    ports:
+        - name: statements
+          protocol: TCP
+          port: 3007
+          targetPort: 3007

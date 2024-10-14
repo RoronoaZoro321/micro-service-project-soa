@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: accounts-mongo-depl
+    name: topup-mongo-depl
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: accounts-mongo
+            app: topup-mongo
     template:
         metadata:
             labels:
-                app: accounts-mongo
+                app: topup-mongo
         spec:
             containers:
-                - name: accounts-mongo
+                - name: topup-mongo
                   image: mongo
                   volumeMounts:
                       - name: mongo-data
-                        mountPath: /data/db
+                        mountPath: /data/db # Mounting the volume at MongoDB's data directory
             volumes:
                 - name: mongo-data
                   persistentVolumeClaim:
-                      claimName: accounts-mongo-pvc
+                      claimName: topup-mongo-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: accounts-mongo-pvc
+    name: topup-mongo-pvc
 spec:
     accessModes:
         - ReadWriteOnce # Allows the volume to be mounted by a single node
@@ -37,10 +37,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: accounts-mongo-srv
+    name: topup-mongo-srv
 spec:
     selector:
-        app: accounts-mongo
+        app: topup-mongo
     ports:
         - name: db
           protocol: TCP

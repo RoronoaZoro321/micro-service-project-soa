@@ -1,5 +1,5 @@
 {
-	"name": "virtual-banking-user-services-apis",
+	"name": "virtual-banking-statements-services-apis",
 	"version": "1.0.0",
 	"main": "app.js",
 	"scripts": {
@@ -7,10 +7,11 @@
 		"start:prod": "NODE_ENV=production node server.js",
 		"debug": "ndb server.js"
 	},
+	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"description": "",
-	"dependencies": {
+    "dependencies": {
 		"@splaika/common": "^1.0.14",
 		"bcryptjs": "^2.4.3",
 		"cors": "^2.8.5",

@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: accounts-mongo-depl
+    name: transaction-mongo-depl
 spec:
     replicas: 1
     selector:
         matchLabels:
-            app: accounts-mongo
+            app: transaction-mongo
     template:
         metadata:
             labels:
-                app: accounts-mongo
+                app: transaction-mongo
         spec:
             containers:
-                - name: accounts-mongo
+                - name: transaction-mongo
                   image: mongo
                   volumeMounts:
                       - name: mongo-data
-                        mountPath: /data/db
+                        mountPath: /data/db # Mounting the volume at MongoDB's data directory
             volumes:
                 - name: mongo-data
                   persistentVolumeClaim:
-                      claimName: accounts-mongo-pvc
+                      claimName: transaction-mongo-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: accounts-mongo-pvc
+    name: transaction-mongo-pvc
 spec:
     accessModes:
         - ReadWriteOnce # Allows the volume to be mounted by a single node
@@ -37,10 +37,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: accounts-mongo-srv
+    name: transaction-mongo-srv
 spec:
     selector:
-        app: accounts-mongo
+        app: transaction-mongo
     ports:
         - name: db
           protocol: TCP

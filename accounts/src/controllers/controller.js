@@ -15,32 +15,6 @@ async function generateUniqueAccountNumber() {
 	return accountNumber;
 }
 
-exports.updateAccount = catchAsync(async (data) => {
-	const { accountId, amount, type } = data;
-
-	// Find the account by ID
-	const account = await Account.findById(accountId);
-
-	// Check if the account exists
-	if (!account) {
-		throw new AppError('Account not found', 404);
-	}
-
-	// Update the balance based on the transaction type (deposit or transfer)
-	if (type === 'deposit') {
-		account.balance += amount; // Add amount for deposit
-	} else if (type === 'transfer') {
-		account.balance -= amount; // Subtract amount for transfer
-	} else {
-		throw new AppError('Invalid transaction type', 400); // Error for invalid type
-	}
-
-	// Save the updated account
-	await account.save();
-
-	return account;
-});
-
 exports.createAccount = catchAsync(async (req, res, next) => {
 	const userId = req.headers['user-id'];
 
@@ -60,6 +34,36 @@ exports.createAccount = catchAsync(async (req, res, next) => {
 			account: newAccount,
 		},
 	});
+});
+
+exports.updateAccount = catchAsync(async (data) => {
+	const { accountId, amount, type } = data;
+
+	// Find the account by ID
+	const account = await Account.findById(accountId);
+
+	// Check if the account exists
+	if (!account) {
+		throw new AppError('Account not found', 404);
+	}
+
+	// Update the balance based on the transaction type (deposit or transfer)
+	if (type === 'deposit') {
+		account.balance += amount; // Add amount for deposit
+	} else if (type === 'transfer') {
+		account.balance -= amount; // Subtract amount for
+
+		if (account.balance < 0) {
+			throw new AppError('Insufficient funds', 400);
+		}
+	} else {
+		throw new AppError('Invalid transaction type', 400); // Error for invalid type
+	}
+
+	// Save the updated account
+	await account.save();
+
+	return account;
 });
 
 exports.getAllAccounts = catchAsync(async (req, res, next) => {
@@ -92,7 +96,6 @@ exports.getAccountById = catchAsync(async (req, res, next) => {
 });
 
 exports.getAccountsByUserId = catchAsync(async (req, res, next) => {
-	// const userId = req.headers["user-id"];
 	const userId = req.body.userId;
 
 	const accounts = await Account.find({ userId });
@@ -104,27 +107,6 @@ exports.getAccountsByUserId = catchAsync(async (req, res, next) => {
 			accounts,
 		},
 	});
-});
-
-exports.checkAccountOwnership = catchAsync(async (req, res, next) => {
-	const { userId, accountId } = req.body;
-
-	console.log(userId);
-	console.log(accountId);
-
-	const account = await Account.findById(accountId);
-
-	if (!account || account.userId.toString() !== userId) {
-		res.status(200).json({
-			status: 'success',
-			result: false,
-		});
-	} else {
-		res.status(200).json({
-			status: 'success',
-			result: true,
-		});
-	}
 });
 
 exports.deleteAccountById = catchAsync(async (req, res, next) => {
@@ -172,6 +154,64 @@ exports.getMyAccounts = catchAsync(async (req, res, next) => {
 		results: accounts.length,
 		data: {
 			accounts,
+		},
+	});
+});
+
+exports.updateMyAccount = catchAsync(async (req, res, next) => {
+	const userId = req.headers['user-id'];
+	const accountId = req.body.accountId;
+	const updateData = { ...req.body };
+
+	// Remove fields that should not be updated
+	delete updateData.accountId;
+	delete updateData.accountNumber;
+	delete updateData.userId;
+
+	// Find the account by ID and user ID to ensure ownership
+	const account = await Account.findOneAndUpdate(
+		{ _id: accountId, userId },
+		updateData,
+		{ new: true, runValidators: true }
+	);
+
+	if (!account) {
+		return next(
+			new AppError('Account not found or not owned by user', 404)
+		);
+	}
+
+	res.status(200).json({
+		status: 'success',
+		data: {
+			account,
+		},
+	});
+});
+
+exports.updateAccountById = catchAsync(async (req, res, next) => {
+	const accountId = req.body.accountId;
+	const updateData = { ...req.body };
+
+	// Remove fields that should not be updated
+	delete updateData.accountId;
+	delete updateData.accountNumber;
+	delete updateData.userId;
+
+	// Find the account by ID and update
+	const account = await Account.findByIdAndUpdate(accountId, updateData, {
+		new: true,
+		runValidators: true,
+	});
+
+	if (!account) {
+		return next(new AppError('Account not found', 404));
+	}
+
+	res.status(200).json({
+		status: 'success',
+		data: {
+			account,
 		},
 	});
 });

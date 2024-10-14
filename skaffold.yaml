@@ -41,3 +41,27 @@ build:
               manual:
                   - src: '**/*.js'
                     dest: .
+        - image: pomper/topup
+          context: topup
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: '**/*.js'
+                    dest: .
+        - image: pomper/statements
+          context: statements
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: '**/*.js'
+                    dest: .
+        - image: pomper/transaction
+          context: transaction
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: '**/*.js'
+                    dest: .

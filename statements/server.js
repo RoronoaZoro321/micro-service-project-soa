@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 process.on('uncaughtException', (err) => {
-	console.log('UNCAUGHT EXCEPTION (Account service)! Shutting down...');
-	console.log(err.name, err.message);
+	console.error('UNCAUGHT EXCEPTION (Statement service)! Shutting down...');
+	console.error(err.name, err.message);
 	process.exit(1);
 });
 
@@ -15,11 +15,12 @@ const {
 	initializeNATSSubscriptions,
 } = require('./src/events/subscribers/subscriber');
 
-const PORT = process.env.ACCOUNT_PORT;
-let server;
+const PORT = process.env.STATEMENT_PORT;
+let server; // Declare server variable for later use
 
 const startServer = async () => {
 	try {
+		// Determine the correct database URL based on the environment
 		let DB;
 		if (process.env.NODE_ENV === 'development') {
 			if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD) {
@@ -74,10 +75,10 @@ const startServer = async () => {
 
 		// Start the server after successful NATS and DB connections
 		server = app.listen(PORT, () => {
-			console.log(`Account Service running on port ${PORT}...`);
+			console.log(`Statement Service running on port ${PORT}...`);
 		});
 	} catch (error) {
-		console.error('Failed to start the Account Service:', error);
+		console.error('Failed to start the Statement Service:', error);
 		process.exit(1);
 	}
 };
@@ -85,7 +86,7 @@ const startServer = async () => {
 startServer();
 
 process.on('unhandledRejection', (err) => {
-	console.error('UNHANDLED REJECTION (Account service)! Shutting down...');
+	console.error('UNHANDLED REJECTION (Statement service)! Shutting down...');
 	console.error(err.name, err.message);
 	if (server) {
 		server.close(() => {

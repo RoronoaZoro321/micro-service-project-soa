@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: transaction-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: transaction
+    template:
+        metadata:
+            labels:
+                app: transaction
+        spec:
+            containers:
+                - name: transaction
+                  image: pomper/transaction
+                  env:
+                      - name: DATABASE_PROD
+                        value: 'mongodb://transaction-mongo-srv:27017/transaction'
+                  envFrom:
+                      - configMapRef:
+                            name: config-mapping
+            restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: transaction-srv
+spec:
+    selector:
+        app: transaction
+    ports:
+        - name: transaction
+          protocol: TCP
+          port: 3004
+          targetPort: 3004
