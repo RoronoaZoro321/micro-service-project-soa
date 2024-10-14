@@ -4,6 +4,8 @@
 	"description": "microservices-systems",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
+		"install:accounts": "cd accounts && npm install",
+		"start:accounts": "cd accounts && npm run start:prod",
 		"install:api-gateway": "cd api-gateway && npm install",
 		"start:api-gateway": "cd api-gateway && npm start",
 		"install:auth-service": "cd services/auth-service/backend && npm install",

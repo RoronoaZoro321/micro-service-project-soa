@@ -56,3 +56,9 @@ sudo minikube tunnel
 ```
 kompose convert
 ```
+
+
+```
+kubectl apply -f infra/k8s/
+kubectl get pods
+```

@@ -1,106 +1,336 @@
-version: '3'
+version: '3.8'
+
 services:
-    api-gateway:
-        image: pomper/api-gateway
-        ports:
-            - '3000:3000'
-        environment:
-            - NODE_ENV=development
-            - API_GATEWAY_PORT=3000
-            - AUTH_PORT=3001
-            - USER_PORT=3002
-            - ACCOUNTS_PORT=3003
-            - TRANSACTION_PORT=3004
-            - TOPUP_PORT=3005
-            - NATS_URL=nats://nats-srv:4222
-            - API_GATEWAY_SERVICE_URL=http://api-gateway-srv:3000/
-            - AUTH_SERVICE_URL=http://auth-srv:3001/api/v1/auth
-            - USER_SERVICE_URL=http://users-srv:3002/api/v1/users
-            - ACCOUNT_SERVICE_URL=http://accounts-srv:3003/api/v1/accounts
-            - TRANSACTION_SERVICE_URL=http://transaction-srv:3004/api/v1/transactions
-            - TOPUP_SERVICE_URL=http://topup-srv:3005/api/v1/topup
-            - JWT_SECRET=ppkidtuengkunkhao
-            - JWT_EXPIRES_IN=90d
-            - JWT_COOKIE_EXPIRES_IN=90
-        depends_on:
-            - nats
-            - auth
-            - users
-            - auth-mongo
-            - users-mongo
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
 
-    auth:
-        image: pomper/auth
-        ports:
-            - '3001:3001'
-        environment:
-            - DATABASE_PROD=mongodb://auth-mongo-srv:27017/auth
-        depends_on:
-            - auth-mongo
-            - nats
+    ports:
+      - "27017:27017"  # Expose MongoDB on host port 27017
+    volumes:
+      - mongo_data:/data/db  # Persist MongoDB data
 
-    auth-mongo:
-        image: mongo
-        ports:
-            - '27017:27017'
+  api-gateway:
+    build: ./api-gateway  # Path to your API Gateway Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
+    depends_on:
+      - mongo
 
-    nats:
-        image: nats:alpine
-        ports:
-            - '4222:4222'
+  auth:
+    build: ./auth  # Path to your Auth service Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
+    depends_on:
+      - mongo
 
-    users:
-        image: pomper/users
-        ports:
-            - '3002:3002'
-        environment:
-            - DATABASE_PROD=mongodb://users-mongo-srv:27017/users
-        depends_on:
-            - users-mongo
-            - nats
+  users:
+    build: ./users  # Path to your User service Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
+    depends_on:
+      - mongo
 
-    users-mongo:
-        image: mongo
-        ports:
-            - '27017:27017'
+  accounts:
+    build: ./accounts  # Path to your Account service Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
+    depends_on:
+      - mongo
 
-    ganache:
-        image: trufflesuite/ganache-cli
-        ports:
-            - '7545:7545'
-        command:
-            - -h 0.0.0.0
-            - -p 7545
-            - -m "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat"
-            - -i 5777
+  transaction:
+    build: ./transaction  # Path to your Transaction service Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
+    depends_on:
+      - mongo
 
-    crypto-service:
-        build: ./crypto
-        ports:
-            - '3006:3006'
-        depends_on:
-            - ganache
-        environment:
-            - RPC_URL=http://ganache:7545
-            - NODE_ENV=development
-            - API_GATEWAY_PORT=3000
-            - AUTH_PORT=3001
-            - USER_PORT=3002
-            - ACCOUNTS_PORT=3003
-            - TRANSACTION_PORT=3004
-            - TOPUP_PORT=3005
-            - CRYPTO_PORT=3006
-            - NATS_URL=nats://nats-srv:4222
-            - API_GATEWAY_SERVICE_URL=http://api-gateway-srv:3000/
-            - AUTH_SERVICE_URL=http://auth-srv:3001/api/v1/auth
-            - USER_SERVICE_URL=http://users-srv:3002/api/v1/users
-            - ACCOUNT_SERVICE_URL=http://accounts-srv:3003/api/v1/accounts
-            - TRANSACTION_SERVICE_URL=http://transaction-srv:3004/api/v1/transactions
-            - TOPUP_SERVICE_URL=http://topup-srv:3005/api/v1/topup
-            # - CRYPTO_SERVICE_URL=http://localhost:3006/
+  topup:
+    build: ./topup  # Path to your Top-Up service Dockerfile
+    ports:
+      - "3005:3005"
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
+    depends_on:
+      - mongo
 
-    # Add any additional services as needed following this pattern
+  crypto:
+    build: ./crypto-service  # Path to your Crypto service Dockerfile
+    ports:
+      - "3006:3006"
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
+    depends_on:
+      - mongo
 
-networks:
-    default:
-        driver: bridge
+  statements:
+    build: ./statements  # Path to your Statement service Dockerfile
+    ports:
+      - "3007:3007"
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./front-end  # Path to your Frontend Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      NODE_ENV: 'development'
+      DATABASE: 'mongodb+srv://Pomper:<PASSWORD>@cluster0.png6lt2.mongodb.net/Virtual-Banking?retryWrites=true&w=majority&appName=Cluster0'
+      DATABASE_PASSWORD: 'YvhLFfkA1VYnEHMQ'
+      API_GATEWAY_PORT: '3000'
+      AUTH_PORT: '3001'
+      USER_PORT: '3002'
+      ACCOUNT_PORT: '3003'
+      TRANSACTION_PORT: '3004'
+      TOPUP_PORT: '3005'
+      CRYPTO_PORT: '3006'
+      STATEMENT_PORT: '3007'
+      FRONTEND_PORT: '8000'
+      NATS_URL: 'nats://nats-srv:4222'
+      API_GATEWAY_SERVICE_URL: 'http://api-gateway-srv:3000/'
+      AUTH_SERVICE_URL: 'http://auth-srv:3001/api/v1/auth'
+      USER_SERVICE_URL: 'http://users-srv:3002/api/v1/users'
+      ACCOUNT_SERVICE_URL: 'http://accounts-srv:3003/api/v1/accounts'
+      TRANSACTION_SERVICE_URL: 'http://transaction-srv:3004/api/v1/transaction'
+      TOPUP_SERVICE_URL: 'http://topup-srv:3005/api/v1/topup'
+      CRYPTO_SERVICE_URL: 'http://crypto-srv:3006/api/v1/crypto'
+      STATEMENT_SERVICE_URL: 'http://statements-srv:3007/api/v1/statements'
+      FRONTEND_SERVICE_URL: 'http://frontend-srv:8000/'
+      JWT_SECRET: 'ppkidtuengkunkhao'
+      JWT_EXPIRES_IN: '90d'
+      JWT_COOKIE_EXPIRES_IN: '90'
+
+volumes:
+  mongo_data:  # Named volume for MongoDB data persistence
