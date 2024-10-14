@@ -15,13 +15,16 @@ router
 	.put(accountController.updateMyAccount);
 
 router.get(
-	'/getAccountByAccountNumber',
+	'/getAccountByAccountNumber/:accountNumber',
 	accountController.getAccountByAccountNumber
 );
 
-router.get('/getAccountById', accountController.getAccountById);
+router.get('/getAccountById/:accountId', accountController.getAccountById);
 
-router.get('/getAccountsByUserId', accountController.getAccountsByUserId);
+router.get(
+	'/getAccountsByUserId/:userId',
+	accountController.getAccountsByUserId
+);
 
 router.delete('/deleteAccountById', accountController.deleteAccountById);
 

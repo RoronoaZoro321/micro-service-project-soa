@@ -5,8 +5,8 @@
 		:endpoint="false"
 		:display-errors="false"
 		add-class="vf-create-account"
+		@submit="submit"
 	>
-		<!-- @submit="submit" -->
 		<StaticElement
 			name="register_title"
 			tag="h3"
@@ -19,6 +19,7 @@
 
 		<ButtonElement
 			name="register"
+			:submits="true"
 			button-label="Login"
 			:full="true"
 			size="lg"
@@ -58,7 +59,7 @@ const submit = async (data, form$) => {
 
 	try {
 		const response = await axios.post(
-			'http://127.0.0.1:3000/api/v1/esb/auth/login',
+			'https://splaika.com/api/v1/auth/login',
 			formData,
 			{
 				withCredentials: true,
@@ -66,7 +67,6 @@ const submit = async (data, form$) => {
 		);
 
 		const data = await response.data;
-		console.log(data);
 
 		isSuccess.value = true;
 		responseData.value = data;
@@ -76,8 +76,11 @@ const submit = async (data, form$) => {
 			isSuccess.value = false;
 		}, 2000);
 	} catch (error) {
+		console.error('Error occurred:', error);
 		isFail.value = true;
-		responseData.value = error.response.data;
+		responseData.value = error.response
+			? error.response.data
+			: 'An error occurred';
 
 		setTimeout(() => {
 			router.push('/Login');
@@ -88,12 +91,20 @@ const submit = async (data, form$) => {
 	}
 };
 
-onBeforeMount(() => {
-	const jwtCookie = document.cookie
-		.split('; ')
-		.find((row) => row.startsWith('sessionId='));
-	if (jwtCookie) {
-		router.push('/balance');
+onBeforeMount(async () => {
+	try {
+		const response = await axios.get(
+			'https://splaika.com/api/v1/users/me',
+			{ withCredentials: true }
+		);
+
+		const data = await response.data;
+
+		if (data.status === 'success') {
+			router.push('/balance');
+		}
+	} catch (err) {
+		console.log('Not authorized');
 	}
 });
 </script>

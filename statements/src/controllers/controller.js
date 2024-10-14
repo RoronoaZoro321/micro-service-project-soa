@@ -14,7 +14,7 @@ exports.getAllStatements = catchAsync(async (req, res) => {
 });
 
 exports.getStatementsByStatementId = catchAsync(async (req, res) => {
-	const statementId = req.body.statementId;
+	const statementId = req.params.statementId;
 
 	const statement = await Statement.findById(statementId);
 
@@ -27,7 +27,7 @@ exports.getStatementsByStatementId = catchAsync(async (req, res) => {
 });
 
 exports.getStatementsByAccountId = catchAsync(async (req, res) => {
-	const accountId = req.body.accountId;
+	const accountId = req.params.accountId;
 
 	const statements = await Statement.find({
 		$or: [{ senderAccountId: accountId }, { receiverAccountId: accountId }],

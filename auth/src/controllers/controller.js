@@ -16,9 +16,9 @@ const createSendToken = (user, statusCode, res) => {
 			Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
 		),
 		// httpOnly: true, // Cookie cannot be accessed via JavaScript
-		httpOnly: false,
+		httpOnly: true,
 		// secure: process.env.NODE_ENV === 'production', // Only send cookie over HTTPS in production
-		secure: false,
+		secure: true,
 		sameSite: 'None',
 	};
 
@@ -80,12 +80,12 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-	res.cookie('sessionId', '', {
-		expires: new Date(0),
-		httpOnly: false,
-		// secure: process.env.NODE_ENV === 'production',
-		secure: false,
+	res.cookie('sessionId', 'loggedout', {
+		expires: new Date(Date.now() + 1 * 1000),
+		httpOnly: true,
+		secure: true,
 		sameSite: 'None',
+		// secure: process.env.NODE_ENV == "production",
 	});
 
 	res.status(200).json({ status: 'success' });

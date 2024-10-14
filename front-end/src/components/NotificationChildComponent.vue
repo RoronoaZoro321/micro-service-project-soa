@@ -1,30 +1,29 @@
 <template>
-	<div class="flex flex-row text-BLACKTEXT bg-indigo-50 p-2 rounded-md mb-2">
-		<div class="rounded-lg w-12 flex items-center justify-center">
-			<Iconify :icon="DollarSign" class="w-8 h-8" />
-		</div>
-		<div class="flex-grow">
-			<div class="flex justify-between">
-				<div class="flex gap-1">
-					<h2 class="font-semibold">
-						<span class="text-slate-500">From</span>
-						{{ senderName }}
-					</h2>
-					<h2 class="font-semibold">
-						<span class="text-slate-500">To</span>
-						{{ receiverName }}
-					</h2>
+	<div class="hover:bg-sky-50 p-2 rounded-md">
+		<div class="flex flex-row text-BLACKTEXT">
+			<div class="rounded-lg w-8">
+				<img src="../assets/profile.png" />
+			</div>
+			<div class="flex flex-col ml-2">
+				<div class="flex justify-center items-center">
+					<span class="pr-2 font-semibold"
+						><span class="text-slate-500">From</span>
+						{{ senderName }}</span
+					>
+					<span class="pr-2 font-semibold"
+						><span class="text-slate-500">To</span>
+						{{ receiverName }}</span
+					>
 				</div>
-				<span v-if="isDeposit">+ ฿ {{ transactionData.amount }}</span>
-				<span v-else>- ฿ {{ transactionData.amount }}</span>
+				<p>transfer ฿ {{ transactionData.amount }}</p>
 			</div>
-			<div class="flex justify-between">
-				<p class="px-4 text-gray-400">
-					{{ formatDate(transactionData.createdAt) }}
-				</p>
-				<p class="text-lime-600" v-if="isDeposit">Transfer In</p>
-				<p class="text-red-600" v-else>Transfer Out</p>
-			</div>
+		</div>
+		<div class="flex justify-between">
+			<p class="text-gray-400 px-2">
+				{{ formatDate(transactionData.createdAt) }}
+			</p>
+			<p class="text-lime-600" v-if="isDeposit">Transfer In</p>
+			<p class="text-red-700" v-else>Transfer Out</p>
 		</div>
 	</div>
 </template>

@@ -12,4 +12,4 @@ COPY . /opt/program
 
 RUN npm run build
 
-CMD [ "serve", "-s", "dist", "-l", "8000" ]
+CMD [ "serve", "-s", "dist", "-l", "3000" ]

@@ -25,11 +25,10 @@ kind: Service
 metadata:
     name: frontend-srv
 spec:
-    type: LoadBalancer
     selector:
         app: frontend
     ports:
         - name: frontend
           protocol: TCP
-          port: 8000
-          targetPort: 8000
+          port: 3000
+          targetPort: 3000

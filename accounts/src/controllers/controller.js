@@ -96,7 +96,7 @@ exports.getAllAccounts = catchAsync(async (req, res, next) => {
 });
 
 exports.getAccountById = catchAsync(async (req, res, next) => {
-	const accountId = req.body.accountId;
+	const accountId = req.params.accountId;
 
 	const account = await Account.findById(accountId);
 
@@ -113,7 +113,7 @@ exports.getAccountById = catchAsync(async (req, res, next) => {
 });
 
 exports.getAccountsByUserId = catchAsync(async (req, res, next) => {
-	const userId = req.body.userId;
+	const userId = req.params.userId;
 
 	const accounts = await Account.find({ userId });
 
@@ -145,7 +145,7 @@ exports.deleteAccountById = catchAsync(async (req, res, next) => {
 });
 
 exports.getAccountByAccountNumber = catchAsync(async (req, res, next) => {
-	const accountNumber = req.body.accountNumber;
+	const accountNumber = req.params.accountNumber;
 
 	const account = await Account.findOne({ accountNumber });
 

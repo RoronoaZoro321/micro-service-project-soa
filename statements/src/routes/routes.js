@@ -6,11 +6,11 @@ const router = express.Router();
 router.route('/').get(statementController.getAllStatements);
 
 router
-	.route('/getStatementById')
+	.route('/getStatementById/:statementId')
 	.get(statementController.getStatementsByStatementId);
 
 router.get(
-	'/getStatementsByAccountId',
+	'/getStatementsByAccountId/:accountId',
 	statementController.getStatementsByAccountId
 );
 

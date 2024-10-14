@@ -1,169 +1,94 @@
 <template>
-  <div class="p-2 rounded-md hover:bg-sky-50">
-    <div class="flex flex-row text-BLACKTEXT">
-      <div class="rounded-lg w-12">
-        <img src="../assets/profile.png" />
-      </div>
-      <div class="flex-grow">
-        <div class="">
-          <div class="flex -lex-cols">
-            <h2 class="px-2 font-semibold">Porf</h2>
-            <span class="pr-2 font-semibold">(98764321)</span>
-            <p>transfer ฿ 500</p>
-          </div>
-          <div class="flex flex-row">
-            <h2 class="mx-2 font-semibold">Luka the junior</h2>
-            <span class="pr-2 font-semibold">(123456789)</span>
-          </div>
-        </div>
-        <div class="flex justify-between">
-          <p class="text-gray-400 px-2">12/12/12</p>
-          <p class="text-lime-600" v-if="isDeposit">Transfer In</p>
-          <p class="text-red-700" v-else>Transfer Out</p>
-        </div>
-      </div>
-      <!-- <div class="flex-grow">
-                <div v-if="isDeposit" class="flex flex-row">
-                    <h2 class="px-2 ml-2 font-semibold">
-                        {{ store.currentAccountName }}
-                    </h2>
-                    <span class="pr-2 font-semibold"
-                        >({{ store.currentAccount }})</span
-                    >
-                    <p>transfer ฿ {{ transactionData.amount }} receive</p>
-                    <h2 class="mx-2 font-semibold">{{ showAccountName }}</h2>
-                    <span class="font-semibold">({{ showAccount }})</span>
-                </div>
-                <div v-else class="flex flex-row">
-                    <h2 class="px-2 ml-2 font-semibold">
-                        {{ store.currentAccountName }}
-                    </h2>
-                    <span class="pr-2 font-semibold"
-                        >({{ store.currentAccount }})</span
-                    >
-                    <p>transfer ฿ {{ transactionData.amount }} to</p>
-                    <h2 class="mx-2 font-semibold">{{ showAccountName }}</h2>
-                    <span class="font-semibold">({{ showAccount }})</span>
-                </div>
-                <div class="flex justify-between">
-                    <p class="px-4 text-gray-400">
-                        {{ formatDate(transactionData.createdAt) }}
-                    </p>
-                    <p class="text-lime-600" v-if="isDeposit">Transfer In</p>
-                    <p class="text-red-700" v-else>Transfer Out</p>
-                </div>
-            </div> -->
-    </div>
-  </div>
-  <div class="border-b"></div>
+	<div class="">
+		<div class="flex flex-grow flex-col gap-2">
+			<NotificationChildComponent
+				v-for="(transaction, index) in latestTransactions"
+				:key="index"
+				:transactionData="transaction"
+			/>
+		</div>
+	</div>
+	<div class="border-b"></div>
 </template>
 
 <script setup>
-import { Icon as Iconify } from "@iconify/vue";
-import { defineProps, onBeforeUpdate, onMounted, ref, watch } from "vue";
-import { useStore } from "../store/store";
-import axios from "axios";
+import { Icon as Iconify } from '@iconify/vue';
+import { useRouter, useRoute } from 'vue-router';
+import { onMounted, ref, computed, watch } from 'vue';
+import { useStore } from '../store/store';
+import axios from 'axios';
+import NotificationChildComponent from './NotificationChildComponent.vue';
 
+const transactionData = ref(null);
+const haveData = ref(false);
+const router = useRouter();
+const route = useRoute();
 const store = useStore();
-const isDeposit = ref(false);
-const showAccount = ref(null);
-const showAccountName = ref(null);
 
-const props = defineProps({
-  transactionData: Object,
+function goto(page) {
+	if (page.name && page.name !== route.name) {
+		router.push({ name: page.name });
+		return;
+	}
+	if (page.path && page.path !== route.path) {
+		router.push({ path: page.path });
+		return;
+	}
+}
+
+const latestTransactions = computed(() => {
+	if (transactionData.value) {
+		// console.log(transactionData.value);
+		return transactionData.value.reverse();
+	}
+	return [];
 });
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const day = date.getDate().toString().padStart(2, "0");
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const year = date.getFullYear().toString().slice(-2);
-  let hours = date.getHours();
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  const ampm = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  const formattedTime = `${hours}:${minutes} ${ampm}`;
-  return `${day}/${month}/${year}, ${formattedTime}`;
-};
-
-const getUserById = async (userId) => {
-  const getUser = await axios.post(
-    "http://127.0.0.1:3000/api/v1/esb/users/getUserById",
-    { userId: userId },
-    { withCredentials: true }
-  );
-
-  const userData = await getUser.data;
-
-  const userName = userData.data.user.name;
-
-  return userName;
-};
-
 const fetchTransactionData = async () => {
-  try {
-    const fetchCurrentAccountId = await axios.post(
-      "http://127.0.0.1:3000/api/v1/esb/users/accounts/getAccountByAccountNumber",
-      { accountNumber: store.currentAccount },
-      { withCredentials: true }
-    );
+	try {
+		haveData.value = false;
+		const fetchAccountId = await axios.get(
+			`https://splaika.com/api/v1/accounts/getAccountByAccountNumber/${store.currentAccount}`,
+			{ withCredentials: true }
+		);
 
-    const currentUser = await fetchCurrentAccountId.data;
-    const currentAccountId = currentUser.data.account._id;
-    const senderAccountId = props.transactionData.senderId;
-    const receiverAccountId = props.transactionData.receiverId;
+		const fetchedData = await fetchAccountId.data;
+		const accountId = fetchedData.data.account._id;
+		console.log(accountId);
 
-    const fetchSenderUserAccount = await axios.post(
-      "http://127.0.0.1:3000/api/v1/esb/users/accounts/getAccountById",
-      { accountId: senderAccountId },
-      { withCredentials: true }
-    );
+		const response = await axios.get(
+			`https://splaika.com/api/v1/statements/getStatementsByAccountId/${accountId}`,
+			{ withCredentials: true }
+		);
 
-    const senderUserAccount = await fetchSenderUserAccount.data;
-    const senderAccountNumber = senderUserAccount.data.account.accountNumber;
+		const data = await response.data;
 
-    const senderUserId = senderUserAccount.data.account.userId;
+		const sortedTransactions = data.data.statements.sort((a, b) => {
+			return new Date(a.createdAt) - new Date(b.createdAt);
+		});
 
-    const fetchReceiverUserAccount = await axios.post(
-      "http://127.0.0.1:3000/api/v1/esb/users/accounts/getAccountById",
-      { accountId: receiverAccountId },
-      { withCredentials: true }
-    );
+		transactionData.value = sortedTransactions;
 
-    const receiverUserAccount = await fetchReceiverUserAccount.data;
-    const receiverAccountNumber =
-      receiverUserAccount.data.account.accountNumber;
-
-    const receiverUserId = receiverUserAccount.data.account.userId;
-
-    if (currentAccountId === senderAccountId) {
-      // TO
-      isDeposit.value = false;
-      showAccount.value = receiverAccountNumber;
-      const userName = await getUserById(receiverUserId);
-      showAccountName.value = userName;
-    } else {
-      // FROM
-      isDeposit.value = true;
-      showAccount.value = senderAccountNumber;
-      const userName = await getUserById(senderUserId);
-      showAccountName.value = userName;
-    }
-  } catch (error) {
-    console.log(error);
-  }
+		if (transactionData.value.length > 0) haveData.value = true;
+	} catch (error) {
+		haveData.value = false;
+		console.log(error.response.data);
+		transactionData.value = null;
+	}
 };
 
 onMounted(() => {
-  fetchTransactionData();
+	fetchTransactionData();
 });
 
 watch(
-  () => props.transactionData,
-  (newData) => {
-    fetchTransactionData();
-  },
-  { deep: true }
+	() => store.currentAccount,
+	(newAccount, oldAccount) => {
+		console.log('Account changed from', oldAccount, 'to', newAccount);
+		if (newAccount !== oldAccount) {
+			fetchTransactionData(newAccount);
+		}
+	},
+	{ deep: true }
 );
 </script>
