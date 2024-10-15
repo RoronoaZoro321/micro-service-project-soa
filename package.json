@@ -4,12 +4,35 @@
 	"description": "microservices-systems",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
+		
 		"install:api-gateway": "cd api-gateway && npm install",
+		"install:auth": "cd auth && npm install",
+		"install:statements": "cd statements && npm install",
+		"install:accounts": "cd accounts && npm install",
+		"install:crypto": "cd crypto-service && npm install",
+		"install:users": "cd users && npm install",
+		"install:topup": "cd topup && npm install",
+		"install:frontend": "cd front-end && npm install",
+		"install:all": "npm run install:api-gateway && npm run install:auth && npm run install:accounts && npm run install:users && npm run install:statements && npm run install:crypto && npm run install:topup && npm run install:frontend",
+
 		"start:api-gateway": "cd api-gateway && npm start",
-		"install:auth-service": "cd services/auth-service/backend && npm install",
-		"start:auth-service": "cd services/auth-service/backend && npm start"
+		"start:auth": "cd auth && npm start",
+		"start:accounts": "cd accounts && npm start",
+		"start:users": "cd users && npm start",
+		"start:statements": "cd statements && npm start",
+		"start:crypto": "cd crypto-service && npm start",
+		"start:topup": "cd topup && npm start",
+		"start:frontend": "cd front-end && npm run dev",
+		
+		"start:all": "concurrently \"npm run start:api-gateway\" \"npm run start:auth\" \"npm run start:accounts\" \"npm run start:transactions\" \"npm run start:users\" \"npm run start:statements\" \"npm run start:crypto\" \"npm run start:topup\" \"npm run start:frontend\"",
+		
+		"install": "npm run install:all",
+		"start": "npm run start:all"
 	},
 	"keywords": [],
 	"author": "",
-	"license": "ISC"
+	"license": "ISC",
+	"devDependencies": {
+        "concurrently": "^6.2.0"
+    }
 }
