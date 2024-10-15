@@ -39,7 +39,7 @@ function goto(page) {
 const latestTransactions = computed(() => {
 	if (transactionData.value) {
 		// console.log(transactionData.value);
-		return transactionData.value.reverse();
+		return [...transactionData.value].reverse();
 	}
 	return [];
 });

@@ -129,13 +129,13 @@ onMounted(async () => {
 async function getContractAddressAndABI() {
 	try {
 		const response = await axios.get(
-			'http://127.0.0.1:3006/api/v1/crypto/getAddressAndABI'
+			'https://splaika.com/api/v1/crypto/getAddressAndABI'
 		);
 
 		const result = await response.data;
 		console.log(result);
-		const { contractAddress, contractABI } = result.data;
-
+		let { contractAddress, contractABI } = result.data;
+		contractAddress = '0x91e361aCA33c620d044FAB155cb07a25dF4bF842';
 		return { contractAddress, contractABI };
 	} catch (error) {
 		console.log(error);
@@ -176,7 +176,7 @@ async function depositToContract() {
 		getBalanceFromContract();
 
 		const response = await axios.post(
-			'http://127.0.0.1:3006/api/v1/crypto/deposit',
+			'https://splaika.com/api/v1/crypto/deposit',
 			{ amount: newValue.value },
 			{ withCredentials: true }
 		);
@@ -214,7 +214,7 @@ async function transferCrypto() {
 		getBalanceFromContract();
 
 		const response = await axios.post(
-			'http://127.0.0.1:3006/api/v1/crypto/transfer',
+			'https://splaika.com/api/v1/crypto/transfer',
 			{ amount: transfer_amount.value, receiver: receiver.value },
 			{ withCredentials: true }
 		);
