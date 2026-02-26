@@ -130,3 +130,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .DS_Store
+
+# k8s config yaml
+config-map.yaml
+config-map.yml

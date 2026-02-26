@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: ganache-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: ganache
+    template:
+        metadata:
+            labels:
+                app: ganache
+        spec:
+            containers:
+                - name: ganache
+                  image: trufflesuite/ganache:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: ganache-srv
+spec:
+    type: LoadBalancer
+    selector:
+        app: ganache
+    ports:
+        - name: db
+          protocol: TCP
+          port: 8545
+          targetPort: 8545

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: accounts-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: accounts
+    template:
+        metadata:
+            labels:
+                app: accounts
+        spec:
+            containers:
+                - name: accounts
+                  image: pomper/accounts
+                  env:
+                      - name: DATABASE_PROD
+                        value: 'mongodb://accounts-mongo-srv:27017/accounts'
+                  envFrom:
+                      - configMapRef:
+                            name: config-mapping
+            restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: accounts-srv
+spec:
+    selector:
+        app: accounts
+    ports:
+        - name: accounts
+          protocol: TCP
+          port: 3003
+          targetPort: 3003
